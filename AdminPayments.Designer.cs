@@ -45,14 +45,22 @@
             this.TimePicker = new System.Windows.Forms.DateTimePicker();
             this.datePicker = new System.Windows.Forms.DateTimePicker();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.dataAvailedProducts = new System.Windows.Forms.DataGridView();
+            this.cbProducts = new System.Windows.Forms.ComboBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.btnAddProduct = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.lblTotalProducts = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cbServiceCategory = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.cbServices = new System.Windows.Forms.ComboBox();
             this.dataAvailedServices = new System.Windows.Forms.DataGridView();
             this.btnAddServices = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.txtReferenceNumber = new System.Windows.Forms.TextBox();
-            this.btnAddProduct = new System.Windows.Forms.Button();
             this.cbPayment = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -67,24 +75,18 @@
             this.label32 = new System.Windows.Forms.Label();
             this.cbDiscounts = new System.Windows.Forms.ComboBox();
             this.btnClear = new System.Windows.Forms.Button();
-            this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.lblTotalService = new System.Windows.Forms.Label();
-            this.cbServices = new System.Windows.Forms.ComboBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.cbServiceCategory = new System.Windows.Forms.ComboBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.cbProducts = new System.Windows.Forms.ComboBox();
-            this.dataAvailedProducts = new System.Windows.Forms.DataGridView();
+            this.btnRemoveService = new System.Windows.Forms.Button();
+            this.btnRemoveProducts = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).BeginInit();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedProducts)).BeginInit();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -252,6 +254,7 @@
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.btnRemoveService);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.label8);
             this.panel1.Controls.Add(this.lblTotalProducts);
@@ -278,6 +281,61 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1089, 862);
             this.panel1.TabIndex = 56;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.btnRemoveProducts);
+            this.groupBox3.Controls.Add(this.dataAvailedProducts);
+            this.groupBox3.Controls.Add(this.cbProducts);
+            this.groupBox3.Controls.Add(this.label27);
+            this.groupBox3.Controls.Add(this.btnAddProduct);
+            this.groupBox3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox3.Location = new System.Drawing.Point(17, 433);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(563, 364);
+            this.groupBox3.TabIndex = 80;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Products";
+            // 
+            // dataAvailedProducts
+            // 
+            this.dataAvailedProducts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataAvailedProducts.Location = new System.Drawing.Point(10, 80);
+            this.dataAvailedProducts.Name = "dataAvailedProducts";
+            this.dataAvailedProducts.Size = new System.Drawing.Size(511, 265);
+            this.dataAvailedProducts.TabIndex = 83;
+            // 
+            // cbProducts
+            // 
+            this.cbProducts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbProducts.FormattingEnabled = true;
+            this.cbProducts.Location = new System.Drawing.Point(135, 38);
+            this.cbProducts.Name = "cbProducts";
+            this.cbProducts.Size = new System.Drawing.Size(248, 27);
+            this.cbProducts.TabIndex = 82;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.Location = new System.Drawing.Point(55, 42);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(74, 19);
+            this.label27.TabIndex = 47;
+            this.label27.Text = "Products:";
+            // 
+            // btnAddProduct
+            // 
+            this.btnAddProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
+            this.btnAddProduct.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAddProduct.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddProduct.Location = new System.Drawing.Point(389, 38);
+            this.btnAddProduct.Name = "btnAddProduct";
+            this.btnAddProduct.Size = new System.Drawing.Size(77, 27);
+            this.btnAddProduct.TabIndex = 76;
+            this.btnAddProduct.Text = "Add";
+            this.btnAddProduct.UseVisualStyleBackColor = false;
             // 
             // label8
             // 
@@ -310,10 +368,50 @@
             this.groupBox4.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(17, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(527, 364);
+            this.groupBox4.Size = new System.Drawing.Size(563, 364);
             this.groupBox4.TabIndex = 52;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Availed Service";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(6, 31);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(127, 19);
+            this.label13.TabIndex = 83;
+            this.label13.Text = "Service Category:";
+            // 
+            // cbServiceCategory
+            // 
+            this.cbServiceCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbServiceCategory.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbServiceCategory.FormattingEnabled = true;
+            this.cbServiceCategory.Location = new System.Drawing.Point(139, 26);
+            this.cbServiceCategory.Name = "cbServiceCategory";
+            this.cbServiceCategory.Size = new System.Drawing.Size(248, 27);
+            this.cbServiceCategory.TabIndex = 82;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(65, 69);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(68, 19);
+            this.label10.TabIndex = 80;
+            this.label10.Text = "Services:";
+            // 
+            // cbServices
+            // 
+            this.cbServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbServices.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbServices.FormattingEnabled = true;
+            this.cbServices.Location = new System.Drawing.Point(139, 66);
+            this.cbServices.Name = "cbServices";
+            this.cbServices.Size = new System.Drawing.Size(248, 27);
+            this.cbServices.TabIndex = 81;
             // 
             // dataAvailedServices
             // 
@@ -352,18 +450,6 @@
             this.txtReferenceNumber.Name = "txtReferenceNumber";
             this.txtReferenceNumber.Size = new System.Drawing.Size(223, 27);
             this.txtReferenceNumber.TabIndex = 45;
-            // 
-            // btnAddProduct
-            // 
-            this.btnAddProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
-            this.btnAddProduct.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnAddProduct.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddProduct.Location = new System.Drawing.Point(389, 38);
-            this.btnAddProduct.Name = "btnAddProduct";
-            this.btnAddProduct.Size = new System.Drawing.Size(77, 27);
-            this.btnAddProduct.TabIndex = 76;
-            this.btnAddProduct.Text = "Add";
-            this.btnAddProduct.UseVisualStyleBackColor = false;
             // 
             // cbPayment
             // 
@@ -511,16 +597,6 @@
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = false;
             // 
-            // label27
-            // 
-            this.label27.AutoSize = true;
-            this.label27.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(55, 42);
-            this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(74, 19);
-            this.label27.TabIndex = 47;
-            this.label27.Text = "Products:";
-            // 
             // label26
             // 
             this.label26.AutoSize = true;
@@ -541,77 +617,29 @@
             this.lblTotalService.TabIndex = 46;
             this.lblTotalService.Text = "0.00";
             // 
-            // cbServices
+            // btnRemoveService
             // 
-            this.cbServices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbServices.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbServices.FormattingEnabled = true;
-            this.cbServices.Location = new System.Drawing.Point(139, 66);
-            this.cbServices.Name = "cbServices";
-            this.cbServices.Size = new System.Drawing.Size(248, 27);
-            this.cbServices.TabIndex = 81;
+            this.btnRemoveService.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnRemoveService.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRemoveService.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveService.Location = new System.Drawing.Point(489, 77);
+            this.btnRemoveService.Name = "btnRemoveService";
+            this.btnRemoveService.Size = new System.Drawing.Size(79, 27);
+            this.btnRemoveService.TabIndex = 81;
+            this.btnRemoveService.Text = "Remove";
+            this.btnRemoveService.UseVisualStyleBackColor = false;
             // 
-            // label10
+            // btnRemoveProducts
             // 
-            this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(65, 69);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(68, 19);
-            this.label10.TabIndex = 80;
-            this.label10.Text = "Services:";
-            // 
-            // cbServiceCategory
-            // 
-            this.cbServiceCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbServiceCategory.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbServiceCategory.FormattingEnabled = true;
-            this.cbServiceCategory.Location = new System.Drawing.Point(139, 26);
-            this.cbServiceCategory.Name = "cbServiceCategory";
-            this.cbServiceCategory.Size = new System.Drawing.Size(248, 27);
-            this.cbServiceCategory.TabIndex = 82;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label13.Location = new System.Drawing.Point(6, 31);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(127, 19);
-            this.label13.TabIndex = 83;
-            this.label13.Text = "Service Category:";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.dataAvailedProducts);
-            this.groupBox3.Controls.Add(this.cbProducts);
-            this.groupBox3.Controls.Add(this.label27);
-            this.groupBox3.Controls.Add(this.btnAddProduct);
-            this.groupBox3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(17, 433);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(527, 364);
-            this.groupBox3.TabIndex = 80;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Products";
-            // 
-            // cbProducts
-            // 
-            this.cbProducts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbProducts.FormattingEnabled = true;
-            this.cbProducts.Location = new System.Drawing.Point(135, 38);
-            this.cbProducts.Name = "cbProducts";
-            this.cbProducts.Size = new System.Drawing.Size(248, 27);
-            this.cbProducts.TabIndex = 82;
-            // 
-            // dataAvailedProducts
-            // 
-            this.dataAvailedProducts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataAvailedProducts.Location = new System.Drawing.Point(10, 80);
-            this.dataAvailedProducts.Name = "dataAvailedProducts";
-            this.dataAvailedProducts.Size = new System.Drawing.Size(511, 265);
-            this.dataAvailedProducts.TabIndex = 83;
+            this.btnRemoveProducts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnRemoveProducts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRemoveProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveProducts.Location = new System.Drawing.Point(472, 38);
+            this.btnRemoveProducts.Name = "btnRemoveProducts";
+            this.btnRemoveProducts.Size = new System.Drawing.Size(79, 27);
+            this.btnRemoveProducts.TabIndex = 82;
+            this.btnRemoveProducts.Text = "Remove";
+            this.btnRemoveProducts.UseVisualStyleBackColor = false;
             // 
             // AdminPayments
             // 
@@ -634,12 +662,12 @@
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedProducts)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -695,5 +723,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox cbProducts;
         private System.Windows.Forms.DataGridView dataAvailedProducts;
+        private System.Windows.Forms.Button btnRemoveService;
+        private System.Windows.Forms.Button btnRemoveProducts;
     }
 }

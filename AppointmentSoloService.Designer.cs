@@ -249,6 +249,7 @@
             // 
             // dataSchedule
             // 
+            this.dataSchedule.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.dataSchedule.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataSchedule.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataSchedule.Location = new System.Drawing.Point(969, 95);
@@ -258,6 +259,7 @@
             // 
             // dataAddServices
             // 
+            this.dataAddServices.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.dataAddServices.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataAddServices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataAddServices.Location = new System.Drawing.Point(503, 95);

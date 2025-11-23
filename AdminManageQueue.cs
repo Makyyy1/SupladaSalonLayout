@@ -43,6 +43,43 @@ namespace SupladaSalonLayout
             }
         }
 
+        private void OpenChildFormInDashboard(Form childForm)
+        {
+            try
+            {
+                // Find the parent dashboard
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form is AdminHomeDashboard)
+                    {
+                        // Use reflection to call the private openChildForm method
+                        System.Reflection.MethodInfo method = form.GetType().GetMethod("openChildForm",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (method != null)
+                        {
+                            method.Invoke(form, new object[] { childForm });
+                        }
+                        break;
+                    }
+                    else if (form is CashierHomeDashboard)
+                    {
+                        // Use reflection to call the private openChildForm method
+                        System.Reflection.MethodInfo method = form.GetType().GetMethod("openChildForm",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (method != null)
+                        {
+                            method.Invoke(form, new object[] { childForm });
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening form: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         public void LoadQueue()
         {
             try
@@ -168,14 +205,23 @@ namespace SupladaSalonLayout
             try
             {
                 DataGridViewRow selectedRow = dataQueue.SelectedRows[0];
+
                 int appointmentId = Convert.ToInt32(selectedRow.Cells["AppointmentID"].Value);
-                string customerName = $"{selectedRow.Cells["CustomerFirstName"].Value} {selectedRow.Cells["CustomerLastName"].Value}";
+                string firstName = selectedRow.Cells["CustomerFirstName"].Value?.ToString();
+                string lastName = selectedRow.Cells["CustomerLastName"].Value?.ToString();
+                string contact = selectedRow.Cells["CustomerContact"].Value?.ToString();
+                DateTime appointmentDate = Convert.ToDateTime(selectedRow.Cells["AppointmentDate"].Value);
+                string appointmentTimeStr = selectedRow.Cells["AppointmentTime"].Value?.ToString();
+                string services = selectedRow.Cells["Services"].Value?.ToString();
+
+                string customerName = $"{firstName} {lastName}";
 
                 DialogResult result = MessageBox.Show(
-                    $"Mark {customerName}'s appointment as Ready for Billing?",
-                    "Confirm Billing",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                $"Mark {customerName}'s appointment as Ready for Billing?",
+                "Confirm Billing",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
 
                 if (result == DialogResult.Yes)
                 {
@@ -193,6 +239,10 @@ namespace SupladaSalonLayout
                             {
                                 LoadQueue();
                                 RefreshDashboard();
+                                
+                                // Open AdminPayments form as child form in the dashboard panel
+                                AdminPayments paymentsForm = new AdminPayments(currentUserID, appointmentId);
+                                OpenChildFormInDashboard(paymentsForm);
                             }
                         }
                     }
