@@ -15,6 +15,7 @@ namespace SupladaSalonLayout
     {
         private int currentUserID = -1;
 
+
         public AdminManageQueue()
         {
             InitializeComponent();
