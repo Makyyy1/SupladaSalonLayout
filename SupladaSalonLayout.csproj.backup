@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{46265303-605D-4C6F-BE27-1C6F36119097}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SupladaSalonLayout</RootNamespace>
+    <AssemblyName>SupladaSalonLayout</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>packages\BouncyCastle.Cryptography.2.4.0\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.4, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>packages\iTextSharp.5.5.13.4\lib\net461\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdminCreateAppointment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminCreateAppointment.Designer.cs">
+      <DependentUpon>AdminCreateAppointment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminDiscounts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminDiscounts.Designer.cs">
+      <DependentUpon>AdminDiscounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminHomeDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminHomeDashboard.Designer.cs">
+      <DependentUpon>AdminHomeDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminManageQueue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminManageQueue.Designer.cs">
+      <DependentUpon>AdminManageQueue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminPayments.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminPayments.Designer.cs">
+      <DependentUpon>AdminPayments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminReports.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminReports.Designer.cs">
+      <DependentUpon>AdminReports.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AppointmentSoloService.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppointmentSoloService.Designer.cs">
+      <DependentUpon>AppointmentSoloService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AppointmentReschedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AppointmentReschedule.Designer.cs">
+      <DependentUpon>AppointmentReschedule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DB_Salon.cs" />
+    <Compile Include="FMAddServices.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMAddServices.Designer.cs">
+      <DependentUpon>FMAddServices.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMAdminProducts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMAdminProducts.Designer.cs">
+      <DependentUpon>FMAdminProducts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMAdminServices.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMAdminServices.Designer.cs">
+      <DependentUpon>FMAdminServices.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMAdminTechnicians.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMAdminTechnicians.Designer.cs">
+      <DependentUpon>FMAdminTechnicians.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMEditCategory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMEditCategory.Designer.cs">
+      <DependentUpon>FMEditCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMEditDiscounts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMEditDiscounts.Designer.cs">
+      <DependentUpon>FMEditDiscounts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMEditProducts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMEditProducts.Designer.cs">
+      <DependentUpon>FMEditProducts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMEditServices.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMEditServices.Designer.cs">
+      <DependentUpon>FMEditServices.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMAddRoles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMAddRoles.Designer.cs">
+      <DependentUpon>FMAddRoles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMEditTechnicians.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMEditTechnicians.Designer.cs">
+      <DependentUpon>FMEditTechnicians.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FMViewCategories.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FMViewCategories.Designer.cs">
+      <DependentUpon>FMViewCategories.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminManageUsers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminManageUsers.Designer.cs">
+      <DependentUpon>AdminManageUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AdminAddCashier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AdminAddCashier.Designer.cs">
+      <DependentUpon>AdminAddCashier.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CashierHomeDashboard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CashierHomeDashboard.Designer.cs">
+      <DependentUpon>CashierHomeDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ForgotPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ForgotPassword.Designer.cs">
+      <DependentUpon>ForgotPassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReceiptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReceiptForm.Designer.cs">
+      <DependentUpon>ReceiptForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WalkInReceipt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WalkInReceipt.Designer.cs">
+      <DependentUpon>WalkInReceipt.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AdminCreateAppointment.resx">
+      <DependentUpon>AdminCreateAppointment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminDiscounts.resx">
+      <DependentUpon>AdminDiscounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminHomeDashboard.resx">
+      <DependentUpon>AdminHomeDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminManageQueue.resx">
+      <DependentUpon>AdminManageQueue.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminPayments.resx">
+      <DependentUpon>AdminPayments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminReports.resx">
+      <DependentUpon>AdminReports.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppointmentSoloService.resx">
+      <DependentUpon>AppointmentSoloService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppointmentReschedule.resx">
+      <DependentUpon>AppointmentReschedule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMAddServices.resx">
+      <DependentUpon>FMAddServices.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMAdminProducts.resx">
+      <DependentUpon>FMAdminProducts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMAdminServices.resx">
+      <DependentUpon>FMAdminServices.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMAdminTechnicians.resx">
+      <DependentUpon>FMAdminTechnicians.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMEditCategory.resx">
+      <DependentUpon>FMEditCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMEditDiscounts.resx">
+      <DependentUpon>FMEditDiscounts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMEditProducts.resx">
+      <DependentUpon>FMEditProducts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMEditServices.resx">
+      <DependentUpon>FMEditServices.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMAddRoles.resx">
+      <DependentUpon>FMAddRoles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMEditTechnicians.resx">
+      <DependentUpon>FMEditTechnicians.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FMViewCategories.resx">
+      <DependentUpon>FMViewCategories.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminManageUsers.resx">
+      <DependentUpon>AdminManageUsers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AdminAddCashier.resx">
+      <DependentUpon>AdminAddCashier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CashierHomeDashboard.resx">
+      <DependentUpon>CashierHomeDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ForgotPassword.resx">
+      <DependentUpon>ForgotPassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ReceiptForm.resx">
+      <DependentUpon>ReceiptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WalkInReceipt.resx">
+      <DependentUpon>WalkInReceipt.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Salon_DB.mdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Salon_DB_log.ldf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>Salon_DB.mdf</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
