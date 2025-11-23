@@ -283,9 +283,9 @@ namespace SupladaSalonLayout
                             emptyRow["ProductPrice"] = 0;
                             dt.Rows.InsertAt(emptyRow, 0);
 
-                            clProducts.DisplayMember = "ProductName";
-                            clProducts.ValueMember = "ProductID";
-                            clProducts.DataSource = dt;
+                            //clProducts.DisplayMember = "ProductName";
+                            //clProducts.ValueMember = "ProductID";
+                            //clProducts.DataSource = dt;
                         }
                     }
                 }
@@ -330,42 +330,6 @@ namespace SupladaSalonLayout
             {
                 MessageBox.Show("Error loading discounts: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void cbProducts_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (clProducts.SelectedValue != null && int.Parse(clProducts.SelectedValue.ToString()) > 0)
-            {
-                try
-                {
-                    using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
-                    {
-                        conn.Open();
-                        string query = "SELECT ProductPrice FROM Products WHERE ProductID = @ProductID";
-
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
-                        {
-                            cmd.Parameters.AddWithValue("@ProductID", clProducts.SelectedValue);
-                            object result = cmd.ExecuteScalar();
-
-                            if (result != null)
-                            {
-                                productPrice = Convert.ToDecimal(result);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error loading product price: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                productPrice = 0;
-            }
-
-            CalculateTotals();
         }
 
         private void cbDiscounts_SelectedIndexChanged(object sender, EventArgs e)

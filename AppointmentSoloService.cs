@@ -206,11 +206,26 @@ namespace SupladaSalonLayout
             selectedServicesTable.Columns.Add("ServicePrice", typeof(decimal));
             
             dataAddServices.DataSource = selectedServicesTable;
+
             dataAddServices.Columns["ServiceID"].Visible = false;
+
             dataAddServices.Columns["ServiceName"].HeaderText = "Service";
+            dataAddServices.Columns["ServiceName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataAddServices.Columns["ServiceName"].FillWeight = 70;
+
             dataAddServices.Columns["ServicePrice"].HeaderText = "Price (₱)";
             dataAddServices.Columns["ServicePrice"].DefaultCellStyle.Format = "N2";
-            
+            dataAddServices.Columns["ServicePrice"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataAddServices.Columns["ServicePrice"].FillWeight = 30;
+            dataAddServices.Columns["ServicePrice"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+
+            dataAddServices.AllowUserToAddRows = false;
+            dataAddServices.AllowUserToDeleteRows = false;
+            dataAddServices.ReadOnly = true;
+            dataAddServices.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataAddServices.MultiSelect = false;
+            dataAddServices.RowHeadersVisible = false;
+
             UpdateTotalPrice();
         }
 
@@ -255,13 +270,30 @@ namespace SupladaSalonLayout
                         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                         DataTable data = new DataTable();
                         adapter.Fill(data);
-
                         dataSchedule.DataSource = data;
+
                         dataSchedule.Columns["AppointmentID"].Visible = false;
+
                         dataSchedule.Columns["CustomerName"].HeaderText = "Customer";
+                        dataSchedule.Columns["CustomerName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        dataSchedule.Columns["CustomerName"].FillWeight = 25;
+                        dataSchedule.Columns["CustomerName"].Width = 150;
+
                         dataSchedule.Columns["AppointmentDate"].HeaderText = "Date";
+                        dataSchedule.Columns["AppointmentDate"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        dataSchedule.Columns["AppointmentDate"].FillWeight = 15;
+                        dataSchedule.Columns["AppointmentDate"].Width = 100;
+                        dataSchedule.Columns["AppointmentDate"].DefaultCellStyle.Format = "MM/dd/yyyy";
+                        dataSchedule.Columns["AppointmentDate"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+
                         dataSchedule.Columns["AppointmentTime"].HeaderText = "Time";
-                        
+                        dataSchedule.Columns["AppointmentTime"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        dataSchedule.Columns["AppointmentTime"].FillWeight = 15;
+                        dataSchedule.Columns["AppointmentTime"].Width = 100;
+                        dataSchedule.Columns["AppointmentTime"].DefaultCellStyle.Format = "t";
+                        dataSchedule.Columns["AppointmentTime"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
                         // Format time column to 12-hour format
                         if (dataSchedule.Columns["AppointmentTime"] != null)
                         {
@@ -272,9 +304,24 @@ namespace SupladaSalonLayout
                         if (data.Columns.Contains("AvailedServices"))
                         {
                             dataSchedule.Columns["AvailedServices"].HeaderText = "Services";
+                            dataSchedule.Columns["AvailedServices"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                            dataSchedule.Columns["AvailedServices"].FillWeight = 30;
+                            dataSchedule.Columns["AvailedServices"].Width = 200;
                         }
                         
                         dataSchedule.Columns["Status"].HeaderText = "Status";
+                        dataSchedule.Columns["Status"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        dataSchedule.Columns["Status"].FillWeight = 15;
+                        dataSchedule.Columns["Status"].Width = 100;
+                        dataSchedule.Columns["Status"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                        dataSchedule.AllowUserToAddRows = false;
+                        dataSchedule.AllowUserToDeleteRows = false;
+                        dataSchedule.ReadOnly = true;
+                        dataSchedule.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                        dataSchedule.MultiSelect = false;
+                        dataSchedule.RowHeadersVisible = false;
+
                     }
                 }
             }
