@@ -28,7 +28,6 @@ namespace SupladaSalonLayout
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ForgotPassword));
             this.pnlSecurityQuestions = new System.Windows.Forms.Panel();
             this.cmbSecurityQuestion = new System.Windows.Forms.ComboBox();
             this.txtSecurityAnswer = new System.Windows.Forms.TextBox();
@@ -51,6 +50,7 @@ namespace SupladaSalonLayout
             // 
             // pnlSecurityQuestions
             // 
+            this.pnlSecurityQuestions.Controls.Add(this.btnCancel);
             this.pnlSecurityQuestions.Controls.Add(this.cmbSecurityQuestion);
             this.pnlSecurityQuestions.Controls.Add(this.txtSecurityAnswer);
             this.pnlSecurityQuestions.Controls.Add(this.txtUsername);
@@ -79,7 +79,7 @@ namespace SupladaSalonLayout
             this.txtSecurityAnswer.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtSecurityAnswer.Location = new System.Drawing.Point(150, 140);
             this.txtSecurityAnswer.Name = "txtSecurityAnswer";
-            this.txtSecurityAnswer.Size = new System.Drawing.Size(280, 23);
+            this.txtSecurityAnswer.Size = new System.Drawing.Size(280, 24);
             this.txtSecurityAnswer.TabIndex = 6;
             // 
             // txtUsername
@@ -87,7 +87,7 @@ namespace SupladaSalonLayout
             this.txtUsername.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtUsername.Location = new System.Drawing.Point(150, 60);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(280, 23);
+            this.txtUsername.Size = new System.Drawing.Size(280, 24);
             this.txtUsername.TabIndex = 5;
             this.txtUsername.TextChanged += new System.EventHandler(this.txtUsername_TextChanged);
             // 
@@ -97,7 +97,7 @@ namespace SupladaSalonLayout
             this.label4.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(20, 143);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(108, 17);
+            this.label4.Size = new System.Drawing.Size(107, 17);
             this.label4.TabIndex = 4;
             this.label4.Text = "Security Answer:";
             // 
@@ -107,7 +107,7 @@ namespace SupladaSalonLayout
             this.label3.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(20, 103);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(115, 17);
+            this.label3.Size = new System.Drawing.Size(118, 17);
             this.label3.TabIndex = 3;
             this.label3.Text = "Security Question:";
             // 
@@ -117,7 +117,7 @@ namespace SupladaSalonLayout
             this.label2.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(20, 63);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 17);
+            this.label2.Size = new System.Drawing.Size(72, 17);
             this.label2.TabIndex = 2;
             this.label2.Text = "Username:";
             // 
@@ -141,7 +141,7 @@ namespace SupladaSalonLayout
             this.label1.Font = new System.Drawing.Font("Calibri", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(20, 20);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(200, 23);
+            this.label1.Size = new System.Drawing.Size(220, 23);
             this.label1.TabIndex = 0;
             this.label1.Text = "Forgot Password Recovery";
             // 
@@ -154,7 +154,7 @@ namespace SupladaSalonLayout
             this.pnlResetPassword.Controls.Add(this.btnResetPassword);
             this.pnlResetPassword.Location = new System.Drawing.Point(12, 12);
             this.pnlResetPassword.Name = "pnlResetPassword";
-            this.pnlResetPassword.Size = new System.Drawing.Size(450, 200);
+            this.pnlResetPassword.Size = new System.Drawing.Size(450, 231);
             this.pnlResetPassword.TabIndex = 1;
             this.pnlResetPassword.Visible = false;
             // 
@@ -164,7 +164,7 @@ namespace SupladaSalonLayout
             this.txtConfirmPassword.Location = new System.Drawing.Point(150, 100);
             this.txtConfirmPassword.Name = "txtConfirmPassword";
             this.txtConfirmPassword.PasswordChar = '*';
-            this.txtConfirmPassword.Size = new System.Drawing.Size(280, 23);
+            this.txtConfirmPassword.Size = new System.Drawing.Size(280, 24);
             this.txtConfirmPassword.TabIndex = 4;
             // 
             // txtNewPassword
@@ -173,7 +173,7 @@ namespace SupladaSalonLayout
             this.txtNewPassword.Location = new System.Drawing.Point(150, 60);
             this.txtNewPassword.Name = "txtNewPassword";
             this.txtNewPassword.PasswordChar = '*';
-            this.txtNewPassword.Size = new System.Drawing.Size(280, 23);
+            this.txtNewPassword.Size = new System.Drawing.Size(280, 24);
             this.txtNewPassword.TabIndex = 3;
             // 
             // label6
@@ -182,7 +182,7 @@ namespace SupladaSalonLayout
             this.label6.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(20, 103);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(120, 17);
+            this.label6.Size = new System.Drawing.Size(119, 17);
             this.label6.TabIndex = 2;
             this.label6.Text = "Confirm Password:";
             // 
@@ -192,7 +192,7 @@ namespace SupladaSalonLayout
             this.label5.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(20, 63);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(95, 17);
+            this.label5.Size = new System.Drawing.Size(98, 17);
             this.label5.TabIndex = 1;
             this.label5.Text = "New Password:";
             // 
@@ -216,7 +216,7 @@ namespace SupladaSalonLayout
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Font = new System.Drawing.Font("Calibri", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(332, 230);
+            this.btnCancel.Location = new System.Drawing.Point(300, 218);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(130, 35);
             this.btnCancel.TabIndex = 2;
@@ -230,7 +230,6 @@ namespace SupladaSalonLayout
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(474, 277);
-            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.pnlResetPassword);
             this.Controls.Add(this.pnlSecurityQuestions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;

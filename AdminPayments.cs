@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextFont = iTextSharp.text.Font;
+using iTextBaseColor = iTextSharp.text.BaseColor;
+using Microsoft.Win32;
 
 namespace SupladaSalonLayout
 {
@@ -23,6 +30,8 @@ namespace SupladaSalonLayout
         private int currentUserID = -1;
         private DataTable servicesTable;
         private DataTable productsTable;
+        private string currentUsername = "Unknown";
+        private string currentRole = "Unknown";
 
         public AdminPayments()
         {
@@ -33,6 +42,7 @@ namespace SupladaSalonLayout
             LoadProducts();
             LoadDiscounts();
             LoadPaymentModes();
+            LoadCurrentUserDetails();
         }
 
         public AdminPayments(int userID, int appointmentId = 0)
@@ -47,6 +57,7 @@ namespace SupladaSalonLayout
             LoadProducts();
             LoadDiscounts();
             LoadPaymentModes();
+            LoadCurrentUserDetails();
             
             if (appointmentId > 0)
             {
@@ -58,11 +69,47 @@ namespace SupladaSalonLayout
         {
             btnAddProduct.Click += btnAddProduct_Click;
             btnAddServices.Click += btnAddServices_Click;
+            btnProceed.Click += btnProceed_Click;
+            btnCancelPayment.Click += btnCancelPayment_Click;
             btnRemoveService.Click += btnRemoveService_Click;
             btnRemoveProducts.Click += btnRemoveProducts_Click;
             cbServiceCategory.SelectedIndexChanged += cbServiceCategory_SelectedIndexChanged;
             cbDiscounts.SelectedIndexChanged += cbDiscounts_SelectedIndexChanged;
             cbPayment.SelectedIndexChanged += cbPayment_SelectedIndexChanged;
+        }
+
+        private void LoadCurrentUserDetails()
+        {
+            if (currentUserID <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT Username, Role FROM Users WHERE UserID = @UserID";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", currentUserID);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                currentUsername = reader["Username"]?.ToString() ?? currentUsername;
+                                currentRole = reader["Role"]?.ToString() ?? currentRole;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading user details: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void InitializeDataGridViews()
@@ -634,9 +681,96 @@ namespace SupladaSalonLayout
             }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnProceed_Click(object sender, EventArgs e)
         {
-            this.Close();
+            try
+            {
+                if (!ValidatePaymentInputs())
+                {
+                    return;
+                }
+
+                if (!EnsureAppointmentForBilling())
+                {
+                    return;
+                }
+
+                DateTime paymentDate = DateTime.Now;
+                string reportsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SalesReports");
+                Directory.CreateDirectory(reportsDirectory);
+
+                string defaultFileName = $"SalesSummary_{paymentDate:yyyyMMdd_HHmmss}.pdf";
+
+                string pdfPath;
+                using (SaveFileDialog saveDialog = new SaveFileDialog()
+                {
+                    Title = "Save Sales Summary",
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = defaultFileName,
+                    InitialDirectory = reportsDirectory
+                })
+                {
+                    if (saveDialog.ShowDialog() != DialogResult.OK)
+                    {
+                        return;
+                    }
+                    pdfPath = saveDialog.FileName;
+                }
+
+                GenerateSalesSummaryPdf(pdfPath, paymentDate);
+                SaveTransactionRecord(pdfPath, paymentDate);
+                UpdateAppointmentStatus("Completed");
+
+                MessageBox.Show("Sales summary saved successfully.", "Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                DialogResult printChoice = MessageBox.Show("Do you want to print the sales summary now?",
+                    "Print Sales Summary", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (printChoice == DialogResult.Yes)
+                {
+                    PrintPdf(pdfPath);
+                }
+
+                ReturnToManageQueue();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error generating sales summary: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnCancelPayment_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (selectedAppointmentID > 0)
+                {
+                    UpdateAppointmentStatus("On going");
+                    // Return to Manage Queue if we came from there
+                    ReturnToManageQueue();
+                    this.Close();
+                    return;
+                }
+
+                DialogResult confirm = MessageBox.Show(
+                    "Cancel this payment entry?",
+                    "Confirm Cancel",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (confirm == DialogResult.Yes)
+                {
+                    this.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error cancelling payment: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void cbPayment_SelectedIndexChanged(object sender, EventArgs e)
@@ -677,6 +811,347 @@ namespace SupladaSalonLayout
                 selectedPaymentModeID = 0;
                 txtReferenceNumber.Enabled = false;
                 txtReferenceNumber.Clear();
+            }
+        }
+
+        private bool ValidatePaymentInputs()
+        {
+            if (servicesTable.Rows.Count == 0)
+            {
+                MessageBox.Show("Please add at least one service before proceeding.",
+                    "Missing Service", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtCustomerFirstName.Text) ||
+                string.IsNullOrWhiteSpace(txtCustomerLastName.Text))
+            {
+                MessageBox.Show("Customer name is required.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (cbPayment.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a mode of payment.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (cbPayment.Text.Equals("GCash", StringComparison.OrdinalIgnoreCase) &&
+                string.IsNullOrWhiteSpace(txtReferenceNumber.Text))
+            {
+                MessageBox.Show("Please enter the GCash reference number.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void GenerateSalesSummaryPdf(string filePath, DateTime paymentDate)
+        {
+            using (FileStream stream = new FileStream(filePath, FileMode.Create))
+            {
+                Document document = new Document(PageSize.A4, 36f, 36f, 36f, 36f);
+                PdfWriter.GetInstance(document, stream);
+                document.Open();
+
+                iTextFont titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
+                iTextFont sectionFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
+                iTextFont normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 11);
+
+                Paragraph title = new Paragraph("Sales Summary", titleFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 15f
+                };
+                document.Add(title);
+
+                document.Add(new Paragraph($"Date: {paymentDate:MMMM dd, yyyy hh:mm tt}", normalFont));
+                document.Add(new Paragraph($"Processed By: {currentRole} {currentUsername}", normalFont));
+                document.Add(new Paragraph($"Reference #: {txtReferenceNumber.Text}", normalFont));
+                document.Add(Chunk.NEWLINE);
+
+                document.Add(new Paragraph("Customer Information", sectionFont));
+                document.Add(new Paragraph($"Name: {txtCustomerFirstName.Text} {txtCustomerLastName.Text}", normalFont));
+                document.Add(new Paragraph($"Contact: {txtContactNumber.Text}", normalFont));
+                document.Add(new Paragraph($"Appointment Date: {datePicker.Value:MMMM dd, yyyy}", normalFont));
+                document.Add(new Paragraph($"Appointment Time: {TimePicker.Value:hh:mm tt}", normalFont));
+                document.Add(Chunk.NEWLINE);
+
+                document.Add(new Paragraph("Availed Services", sectionFont));
+                PdfPTable servicesPdfTable = new PdfPTable(2);
+                servicesPdfTable.WidthPercentage = 100;
+                servicesPdfTable.SetWidths(new float[] { 70f, 30f });
+                servicesPdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
+
+                servicesPdfTable.AddCell(GetHeaderCell("Service"));
+                servicesPdfTable.AddCell(GetHeaderCell("Price"));
+
+                decimal totalServices = 0;
+                foreach (DataRow row in servicesTable.Rows)
+                {
+                    string serviceName = row["ServiceName"].ToString();
+                    decimal price = Convert.ToDecimal(row["ServicePrice"]);
+                    totalServices += price;
+                    servicesPdfTable.AddCell(GetBodyCell(serviceName));
+                    servicesPdfTable.AddCell(GetBodyCell(price.ToString("N2"), Element.ALIGN_RIGHT));
+                }
+                document.Add(servicesPdfTable);
+                document.Add(Chunk.NEWLINE);
+
+                document.Add(new Paragraph("Availed Products", sectionFont));
+                PdfPTable productsPdfTable = new PdfPTable(2);
+                productsPdfTable.WidthPercentage = 100;
+                productsPdfTable.SetWidths(new float[] { 70f, 30f });
+                productsPdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
+                productsPdfTable.AddCell(GetHeaderCell("Product"));
+                productsPdfTable.AddCell(GetHeaderCell("Price"));
+
+                decimal totalProducts = 0;
+                if (productsTable.Rows.Count > 0)
+                {
+                    foreach (DataRow row in productsTable.Rows)
+                    {
+                        string productName = row["ProductName"].ToString();
+                        decimal price = Convert.ToDecimal(row["ProductPrice"]);
+                        totalProducts += price;
+                        productsPdfTable.AddCell(GetBodyCell(productName));
+                        productsPdfTable.AddCell(GetBodyCell(price.ToString("N2"), Element.ALIGN_RIGHT));
+                    }
+                }
+                else
+                {
+                    PdfPCell noProductCell = new PdfPCell(new Phrase("No add-on products availed.", normalFont))
+                    {
+                        Colspan = 2,
+                        HorizontalAlignment = Element.ALIGN_LEFT,
+                        Padding = 5f
+                    };
+                    productsPdfTable.AddCell(noProductCell);
+                }
+
+                document.Add(productsPdfTable);
+                document.Add(Chunk.NEWLINE);
+
+                document.Add(new Paragraph("Totals", sectionFont));
+                PdfPTable totalsTable = new PdfPTable(2);
+                totalsTable.WidthPercentage = 70;
+                totalsTable.HorizontalAlignment = Element.ALIGN_LEFT;
+                totalsTable.SetWidths(new float[] { 50f, 50f });
+
+                totalsTable.AddCell(GetBodyCell("Total Services:", Element.ALIGN_LEFT));
+                totalsTable.AddCell(GetBodyCell(totalServices.ToString("N2"), Element.ALIGN_RIGHT));
+
+                totalsTable.AddCell(GetBodyCell("Total Products:", Element.ALIGN_LEFT));
+                totalsTable.AddCell(GetBodyCell(totalProducts.ToString("N2"), Element.ALIGN_RIGHT));
+
+                totalsTable.AddCell(GetBodyCell("Discount:", Element.ALIGN_LEFT));
+                totalsTable.AddCell(GetBodyCell(discountAmount.ToString("N2"), Element.ALIGN_RIGHT));
+
+                decimal subtotal = totalServices + totalProducts;
+                decimal grandTotal = subtotal - discountAmount;
+                if (grandTotal < 0) grandTotal = 0;
+
+                totalsTable.AddCell(GetBodyCell("Grand Total:", Element.ALIGN_LEFT));
+                totalsTable.AddCell(GetBodyCell(grandTotal.ToString("N2"), Element.ALIGN_RIGHT));
+
+                document.Add(totalsTable);
+                document.Add(Chunk.NEWLINE);
+
+                document.Add(new Paragraph($"Mode of Payment: {cbPayment.Text}", normalFont));
+                document.Close();
+            }
+        }
+
+        private PdfPCell GetHeaderCell(string text)
+        {
+            iTextFont headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+            return new PdfPCell(new Phrase(text, headerFont))
+            {
+                BackgroundColor = new iTextBaseColor(240, 240, 240),
+                Padding = 5f,
+                HorizontalAlignment = Element.ALIGN_LEFT
+            };
+        }
+
+        private PdfPCell GetBodyCell(string text, int alignment = Element.ALIGN_LEFT)
+        {
+            iTextFont bodyFont = FontFactory.GetFont(FontFactory.HELVETICA, 11);
+            return new PdfPCell(new Phrase(text, bodyFont))
+            {
+                Padding = 5f,
+                HorizontalAlignment = alignment
+            };
+        }
+
+        private void SaveTransactionRecord(string pdfPath, DateTime paymentDate)
+        {
+            string serviceList = string.Join(", ", servicesTable.AsEnumerable().Select(r => r["ServiceName"].ToString()));
+            decimal totalServices = servicesTable.AsEnumerable().Sum(r => Convert.ToDecimal(r["ServicePrice"]));
+
+            string productList = productsTable.Rows.Count > 0
+                ? string.Join(", ", productsTable.AsEnumerable().Select(r => r["ProductName"].ToString()))
+                : "None";
+            decimal totalProducts = productsTable.AsEnumerable().Sum(r => Convert.ToDecimal(r["ProductPrice"]));
+
+            string discountName = cbDiscounts.SelectedIndex > 0 ? cbDiscounts.Text : "None";
+            decimal subtotal = totalServices + totalProducts;
+            decimal totalAmount = subtotal - discountAmount;
+            if (totalAmount < 0) totalAmount = 0;
+
+            using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+            {
+                conn.Open();
+                string insertQuery = @"
+                    INSERT INTO Transactions 
+                    (AppointmentID, PaymentModeID, CustomerFirstName, CustomerLastName, CustomerContact, 
+                     AppointmentDate, AppointmentTime, Service1, Service1Price, Service2, Service2Price, 
+                     ProductName, ProductPrice, DiscountType, DiscountAmount, Subtotal, Total, TransactionDate, UserID, ReferenceNumber, ReportFilePath)
+                    VALUES
+                    (@AppointmentID, @PaymentModeID, @CustomerFirstName, @CustomerLastName, @CustomerContact,
+                     @AppointmentDate, @AppointmentTime, @Service1, @Service1Price, @Service2, @Service2Price,
+                     @ProductName, @ProductPrice, @DiscountType, @DiscountAmount, @Subtotal, @Total, @TransactionDate, @UserID, @ReferenceNumber, @ReportFilePath)";
+
+                using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@AppointmentID", selectedAppointmentID);
+                    cmd.Parameters.AddWithValue("@PaymentModeID", selectedPaymentModeID);
+                    cmd.Parameters.AddWithValue("@CustomerFirstName", txtCustomerFirstName.Text);
+                    cmd.Parameters.AddWithValue("@CustomerLastName", txtCustomerLastName.Text);
+                    cmd.Parameters.AddWithValue("@CustomerContact", txtContactNumber.Text);
+                    cmd.Parameters.AddWithValue("@AppointmentDate", datePicker.Value.Date);
+                    cmd.Parameters.AddWithValue("@AppointmentTime", TimePicker.Value.TimeOfDay);
+                    cmd.Parameters.AddWithValue("@Service1", serviceList);
+                    cmd.Parameters.AddWithValue("@Service1Price", totalServices);
+                    cmd.Parameters.AddWithValue("@Service2", DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Service2Price", 0);
+                    cmd.Parameters.AddWithValue("@ProductName", productList);
+                    cmd.Parameters.AddWithValue("@ProductPrice", totalProducts);
+                    cmd.Parameters.AddWithValue("@DiscountType", discountName);
+                    cmd.Parameters.AddWithValue("@DiscountAmount", discountAmount);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Total", totalAmount);
+                    cmd.Parameters.AddWithValue("@TransactionDate", paymentDate);
+                    cmd.Parameters.AddWithValue("@UserID", currentUserID);
+                    cmd.Parameters.AddWithValue("@ReferenceNumber", txtReferenceNumber.Text);
+                    cmd.Parameters.AddWithValue("@ReportFilePath", pdfPath);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private void PrintPdf(string filePath)
+        {
+            try
+            {
+                if (!IsPdfPrintAssociationAvailable())
+                {
+                    MessageBox.Show("No default application is associated with PDF printing on this machine. " +
+                        "Please open the saved file manually and print from your preferred PDF viewer.",
+                        "Print Not Available", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                ProcessStartInfo printProcessInfo = new ProcessStartInfo()
+                {
+                    Verb = "print",
+                    CreateNoWindow = true,
+                    FileName = filePath,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+                Process printProcess = new Process();
+                printProcess.StartInfo = printProcessInfo;
+                printProcess.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to send PDF to printer: " + ex.Message, "Print Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool IsPdfPrintAssociationAvailable()
+        {
+            try
+            {
+                using (RegistryKey pdfKey = Registry.ClassesRoot.OpenSubKey(".pdf"))
+                {
+                    if (pdfKey == null)
+                    {
+                        return false;
+                    }
+
+                    string className = pdfKey.GetValue(null) as string;
+                    if (string.IsNullOrEmpty(className))
+                    {
+                        return false;
+                    }
+
+                    using (RegistryKey commandKey = Registry.ClassesRoot.OpenSubKey(className + "\\shell\\print\\command"))
+                    {
+                        return commandKey != null;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void UpdateAppointmentStatus(string status)
+        {
+            if (selectedAppointmentID <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+                {
+                    conn.Open();
+                    string query = "UPDATE Appointments SET Status = @Status WHERE AppointmentID = @AppointmentID";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Status", status);
+                        cmd.Parameters.AddWithValue("@AppointmentID", selectedAppointmentID);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating appointment status: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ReturnToManageQueue()
+        {
+            try
+            {
+                foreach (Form form in Application.OpenForms)
+                {
+                    if (form is AdminHomeDashboard || form is CashierHomeDashboard)
+                    {
+                        var method = form.GetType().GetMethod("openChildForm",
+                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (method != null)
+                        {
+                            method.Invoke(form, new object[] { new AdminManageQueue(currentUserID) });
+                        }
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error returning to Manage Queue: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -762,6 +1237,114 @@ namespace SupladaSalonLayout
                 MessageBox.Show("Error removing product: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private bool EnsureAppointmentForBilling()
+        {
+            if (selectedAppointmentID > 0)
+            {
+                return true;
+            }
+
+            try
+            {
+                selectedAppointmentID = CreateManualAppointmentFromForm();
+                return selectedAppointmentID > 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to create appointment record for billing: " + ex.Message,
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private int CreateManualAppointmentFromForm()
+        {
+            if (servicesTable.Rows.Count == 0)
+            {
+                throw new InvalidOperationException("Please add at least one service before proceeding.");
+            }
+
+            string serviceList = string.Join(", ", servicesTable.AsEnumerable().Select(r => r["ServiceName"].ToString()));
+            string primaryServiceName = servicesTable.Rows[0]["ServiceName"].ToString();
+            int serviceId = GetServiceIdByName(primaryServiceName);
+
+            using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+            {
+                conn.Open();
+                string insertQuery = @"INSERT INTO Appointments
+                                       (CustomerFirstName, CustomerLastName, CustomerContact, ServiceID, [Service Name],
+                                        AppointmentDate, AppointmentTime, Status, UserID)
+                                       OUTPUT INSERTED.AppointmentID
+                                       VALUES
+                                       (@FirstName, @LastName, @Contact, @ServiceID, @ServiceName,
+                                        @AppointmentDate, @AppointmentTime, 'Ready for Billing', @UserID)";
+
+                using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@FirstName", txtCustomerFirstName.Text);
+                    cmd.Parameters.AddWithValue("@LastName", txtCustomerLastName.Text);
+                    cmd.Parameters.AddWithValue("@Contact", txtContactNumber.Text);
+                    cmd.Parameters.AddWithValue("@ServiceID", serviceId);
+                    cmd.Parameters.AddWithValue("@ServiceName", serviceList);
+                    cmd.Parameters.AddWithValue("@AppointmentDate", datePicker.Value.Date);
+                    cmd.Parameters.AddWithValue("@AppointmentTime", TimePicker.Value.TimeOfDay);
+                    cmd.Parameters.AddWithValue("@UserID", currentUserID > 0 ? currentUserID : (object)DBNull.Value);
+
+                    object result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            throw new Exception("Failed to create appointment record.");
+        }
+
+        private int GetServiceIdByName(string serviceName)
+        {
+            if (string.IsNullOrWhiteSpace(serviceName))
+            {
+                return GetDefaultServiceId();
+            }
+
+            using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+            {
+                conn.Open();
+                string query = "SELECT TOP 1 ServiceID FROM Services WHERE ServiceName = @ServiceName";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ServiceName", serviceName);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            return GetDefaultServiceId();
+        }
+
+        private int GetDefaultServiceId()
+        {
+            using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+            {
+                conn.Open();
+                string query = "SELECT TOP 1 ServiceID FROM Services ORDER BY ServiceID";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    object result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                }
+            }
+
+            throw new Exception("No services are defined in the system.");
         }
     }
 }

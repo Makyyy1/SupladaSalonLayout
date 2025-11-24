@@ -45,7 +45,9 @@
             this.TimePicker = new System.Windows.Forms.DateTimePicker();
             this.datePicker = new System.Windows.Forms.DateTimePicker();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnRemoveService = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnRemoveProducts = new System.Windows.Forms.Button();
             this.dataAvailedProducts = new System.Windows.Forms.DataGridView();
             this.cbProducts = new System.Windows.Forms.ComboBox();
             this.label27 = new System.Windows.Forms.Label();
@@ -63,7 +65,7 @@
             this.txtReferenceNumber = new System.Windows.Forms.TextBox();
             this.cbPayment = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnCancelPayment = new System.Windows.Forms.Button();
             this.btnProceed = new System.Windows.Forms.Button();
             this.lblTotal = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -77,8 +79,6 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.lblTotalService = new System.Windows.Forms.Label();
-            this.btnRemoveService = new System.Windows.Forms.Button();
-            this.btnRemoveProducts = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -263,7 +263,7 @@
             this.panel1.Controls.Add(this.txtReferenceNumber);
             this.panel1.Controls.Add(this.cbPayment);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.btnCancel);
+            this.panel1.Controls.Add(this.btnCancelPayment);
             this.panel1.Controls.Add(this.btnProceed);
             this.panel1.Controls.Add(this.lblTotal);
             this.panel1.Controls.Add(this.label22);
@@ -282,6 +282,18 @@
             this.panel1.Size = new System.Drawing.Size(1089, 862);
             this.panel1.TabIndex = 56;
             // 
+            // btnRemoveService
+            // 
+            this.btnRemoveService.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnRemoveService.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRemoveService.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveService.Location = new System.Drawing.Point(489, 77);
+            this.btnRemoveService.Name = "btnRemoveService";
+            this.btnRemoveService.Size = new System.Drawing.Size(79, 27);
+            this.btnRemoveService.TabIndex = 81;
+            this.btnRemoveService.Text = "Remove";
+            this.btnRemoveService.UseVisualStyleBackColor = false;
+            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.btnRemoveProducts);
@@ -296,6 +308,18 @@
             this.groupBox3.TabIndex = 80;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Products";
+            // 
+            // btnRemoveProducts
+            // 
+            this.btnRemoveProducts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnRemoveProducts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRemoveProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveProducts.Location = new System.Drawing.Point(472, 38);
+            this.btnRemoveProducts.Name = "btnRemoveProducts";
+            this.btnRemoveProducts.Size = new System.Drawing.Size(79, 27);
+            this.btnRemoveProducts.TabIndex = 82;
+            this.btnRemoveProducts.Text = "Remove";
+            this.btnRemoveProducts.UseVisualStyleBackColor = false;
             // 
             // dataAvailedProducts
             // 
@@ -471,17 +495,17 @@
             this.label4.TabIndex = 72;
             this.label4.Text = "Mode of Payment:";
             // 
-            // btnCancel
+            // btnCancelPayment
             // 
-            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnCancel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(735, 446);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(129, 37);
-            this.btnCancel.TabIndex = 67;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancelPayment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnCancelPayment.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnCancelPayment.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancelPayment.Location = new System.Drawing.Point(735, 446);
+            this.btnCancelPayment.Name = "btnCancelPayment";
+            this.btnCancelPayment.Size = new System.Drawing.Size(129, 37);
+            this.btnCancelPayment.TabIndex = 67;
+            this.btnCancelPayment.Text = "Cancel";
+            this.btnCancelPayment.UseVisualStyleBackColor = false;
             // 
             // btnProceed
             // 
@@ -617,30 +641,6 @@
             this.lblTotalService.TabIndex = 46;
             this.lblTotalService.Text = "0.00";
             // 
-            // btnRemoveService
-            // 
-            this.btnRemoveService.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
-            this.btnRemoveService.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnRemoveService.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRemoveService.Location = new System.Drawing.Point(489, 77);
-            this.btnRemoveService.Name = "btnRemoveService";
-            this.btnRemoveService.Size = new System.Drawing.Size(79, 27);
-            this.btnRemoveService.TabIndex = 81;
-            this.btnRemoveService.Text = "Remove";
-            this.btnRemoveService.UseVisualStyleBackColor = false;
-            // 
-            // btnRemoveProducts
-            // 
-            this.btnRemoveProducts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
-            this.btnRemoveProducts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnRemoveProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRemoveProducts.Location = new System.Drawing.Point(472, 38);
-            this.btnRemoveProducts.Name = "btnRemoveProducts";
-            this.btnRemoveProducts.Size = new System.Drawing.Size(79, 27);
-            this.btnRemoveProducts.TabIndex = 82;
-            this.btnRemoveProducts.Text = "Remove";
-            this.btnRemoveProducts.UseVisualStyleBackColor = false;
-            // 
             // AdminPayments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -700,7 +700,7 @@
         private System.Windows.Forms.Button btnAddProduct;
         private System.Windows.Forms.ComboBox cbPayment;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnCancelPayment;
         private System.Windows.Forms.Button btnProceed;
         private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label label22;

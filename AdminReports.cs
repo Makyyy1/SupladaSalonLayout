@@ -48,24 +48,32 @@ namespace SupladaSalonLayout
                 using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
                 {
                     conn.Open();
-                    // Check if UserID column exists in Transactions table, if not add it
-                    string checkColumn = @"IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Transactions]') AND name = 'UserID')
-                                          BEGIN
-                                              ALTER TABLE Transactions ADD UserID INT NULL;
-                                              -- Update existing records to link to appointments' UserID
-                                              UPDATE t SET t.UserID = a.UserID
-                                              FROM Transactions t
-                                              INNER JOIN Appointments a ON t.AppointmentID = a.AppointmentID;
-                                          END";
-                    using (SqlCommand cmd = new SqlCommand(checkColumn, conn))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
+                    EnsureTransactionsColumn(conn, "UserID", "INT NULL",
+                        @"UPDATE t SET t.UserID = a.UserID
+                          FROM Transactions t
+                          INNER JOIN Appointments a ON t.AppointmentID = a.AppointmentID;");
+                    EnsureTransactionsColumn(conn, "ReferenceNumber", "NVARCHAR(100) NULL");
+                    EnsureTransactionsColumn(conn, "ReportFilePath", "NVARCHAR(MAX) NULL");
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error initializing Transactions table: " + ex.Message);
+            }
+        }
+
+        private void EnsureTransactionsColumn(SqlConnection conn, string columnName, string definition, string postScript = null)
+        {
+            string query = $@"
+                IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Transactions]') AND name = '{columnName}')
+                BEGIN
+                    ALTER TABLE Transactions ADD {columnName} {definition};
+                    {postScript}
+                END";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -85,18 +93,20 @@ namespace SupladaSalonLayout
                                         t.CustomerContact,
                                         t.AppointmentDate,
                                         t.Service1,
-                                        t.Service2,
                                         t.ProductName,
                                         t.DiscountType,
                                         ISNULL(pm.PaymentModeName, 'N/A') AS PaymentMode,
+                                        ISNULL(NULLIF(t.ReferenceNumber, ''), 'None') AS ReferenceNumber,
+                                        ISNULL(u.Username, 'Unknown') AS ProcessedBy,
+                                        ISNULL(u.Role, 'N/A') AS ProcessedRole,
                                         t.Total,
                                         t.TransactionDate
                                     FROM Transactions t
                                     LEFT JOIN PaymentModes pm ON t.PaymentModeID = pm.PaymentModeID
                                     LEFT JOIN Appointments a ON t.AppointmentID = a.AppointmentID
+                                    LEFT JOIN Users u ON COALESCE(t.UserID, a.UserID) = u.UserID
                                     WHERE CAST(t.TransactionDate AS DATE) >= @StartDate 
                                     AND CAST(t.TransactionDate AS DATE) <= @EndDate
-                                    AND a.UserID = @UserID
                                     ORDER BY t.TransactionDate DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -118,11 +128,13 @@ namespace SupladaSalonLayout
                             dataReports.Columns["CustomerName"].HeaderText = "Customer Name";
                             dataReports.Columns["CustomerContact"].HeaderText = "Contact";
                             dataReports.Columns["AppointmentDate"].HeaderText = "Appointment Date";
-                            dataReports.Columns["Service1"].HeaderText = "Service 1";
-                            dataReports.Columns["Service2"].HeaderText = "Service 2";
+                            dataReports.Columns["Service1"].HeaderText = "Services";
                             dataReports.Columns["ProductName"].HeaderText = "Product";
                             dataReports.Columns["DiscountType"].HeaderText = "Discount";
                             dataReports.Columns["PaymentMode"].HeaderText = "Mode of Payment";
+                            dataReports.Columns["ReferenceNumber"].HeaderText = "Reference #";
+                            dataReports.Columns["ProcessedBy"].HeaderText = "Processed By";
+                            dataReports.Columns["ProcessedRole"].HeaderText = "Role";
                             dataReports.Columns["Total"].HeaderText = "Total";
                             dataReports.Columns["TransactionDate"].HeaderText = "Transaction Date";
 
@@ -131,11 +143,13 @@ namespace SupladaSalonLayout
                             dataReports.Columns["CustomerName"].FillWeight = 100;
                             dataReports.Columns["CustomerContact"].FillWeight = 80;
                             dataReports.Columns["AppointmentDate"].FillWeight = 80;
-                            dataReports.Columns["Service1"].FillWeight = 110;
-                            dataReports.Columns["Service2"].FillWeight = 110;
+                            dataReports.Columns["Service1"].FillWeight = 130;
                             dataReports.Columns["ProductName"].FillWeight = 80;
                             dataReports.Columns["DiscountType"].FillWeight = 80;
                             dataReports.Columns["PaymentMode"].FillWeight = 90;
+                            dataReports.Columns["ReferenceNumber"].FillWeight = 90;
+                            dataReports.Columns["ProcessedBy"].FillWeight = 90;
+                            dataReports.Columns["ProcessedRole"].FillWeight = 70;
                             dataReports.Columns["Total"].FillWeight = 70;
                             dataReports.Columns["TransactionDate"].FillWeight = 100;
 
@@ -175,7 +189,7 @@ namespace SupladaSalonLayout
                 {
                     conn.Open();
                     string query = @"SELECT ISNULL(SUM(Total), 0) 
-                                    FROM Transactions
+                                    FROM Transactions t
                                     WHERE CAST(TransactionDate AS DATE) >= @StartDate 
                                     AND CAST(TransactionDate AS DATE) <= @EndDate";
 

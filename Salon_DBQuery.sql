@@ -62,6 +62,7 @@ CREATE TABLE Appointments (
     TechnicianID INT NULL,
     AppointmentDate DATE,
     AppointmentTime NVARCHAR(20) NOT NULL,
+    ReferenceNumber NVARCHAR(100) NULL,
     Status NVARCHAR(20) CHECK (Status IN ('Pending', 'Confirmed', 'Completed', 'Cancelled', 'Ready for Billing')) DEFAULT 'Confirmed',
     UserID INT NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
@@ -79,6 +80,7 @@ CREATE TABLE Transactions (
     TransactionID     INT             IDENTITY (1, 1) NOT NULL,
     AppointmentID    INT             NOT NULL,
     PaymentModeID INT NULL,
+    ReferenceNumber NVARCHAR(100) NULL,
     CustomerFirstName NVARCHAR (100)  NULL,
     CustomerLastName  NVARCHAR (100)  NULL,
     CustomerContact   NVARCHAR (20)   NULL,
@@ -95,6 +97,7 @@ CREATE TABLE Transactions (
     Subtotal          DECIMAL (10, 2) NULL,
     Total             DECIMAL (10, 2) NULL,
     TransactionDate   DATETIME        DEFAULT (getdate()) NULL,
+    ReportFilePath NVARCHAR(MAX) NULL,
     PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments] ([AppointmentID]),
     FOREIGN KEY (PaymentModeID) REFERENCES PaymentModes(PaymentModeID)

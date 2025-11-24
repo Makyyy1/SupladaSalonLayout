@@ -186,6 +186,11 @@ namespace SupladaSalonLayout
             openChildForm(new AdminManageQueue(currentUserID));
         }
 
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            openChildForm(new AdminReports(currentUserID));
+        }
+
         private void btnLogout_Click(object sender, EventArgs e)
         {
             DialogResult logout = MessageBox.Show("Are you sure you want to logout?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
