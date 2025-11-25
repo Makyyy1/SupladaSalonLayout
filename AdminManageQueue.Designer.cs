@@ -45,6 +45,7 @@
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnReadyBilling = new System.Windows.Forms.Button();
             this.btnScheduledAppointments = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataQueue)).BeginInit();
             this.SuspendLayout();
@@ -90,7 +91,7 @@
             this.btnCancelAppointment.Name = "btnCancelAppointment";
             this.btnCancelAppointment.Size = new System.Drawing.Size(238, 38);
             this.btnCancelAppointment.TabIndex = 33;
-            this.btnCancelAppointment.Text = "Cancel Appointment";
+            this.btnCancelAppointment.Text = "Remove from Queue";
             this.btnCancelAppointment.UseVisualStyleBackColor = false;
             this.btnCancelAppointment.Click += new System.EventHandler(this.btnCancelAppointment_Click);
             // 
@@ -212,8 +213,22 @@
             this.btnScheduledAppointments.Name = "btnScheduledAppointments";
             this.btnScheduledAppointments.Size = new System.Drawing.Size(238, 41);
             this.btnScheduledAppointments.TabIndex = 41;
-            this.btnScheduledAppointments.Text = "View Appointments";
+            this.btnScheduledAppointments.Text = "View Ready for Queue";
             this.btnScheduledAppointments.UseVisualStyleBackColor = false;
+            this.btnScheduledAppointments.Click += new System.EventHandler(this.btnScheduledAppointments_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnCancel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.Location = new System.Drawing.Point(1388, 241);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(238, 38);
+            this.btnCancel.TabIndex = 42;
+            this.btnCancel.Text = "Cancel Appointment";
+            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // AdminManageQueue
             // 
@@ -221,6 +236,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(1638, 949);
+            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnScheduledAppointments);
             this.Controls.Add(this.btnReadyBilling);
             this.Controls.Add(this.dataQueue);
@@ -253,5 +269,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
         private System.Windows.Forms.Button btnReadyBilling;
         private System.Windows.Forms.Button btnScheduledAppointments;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

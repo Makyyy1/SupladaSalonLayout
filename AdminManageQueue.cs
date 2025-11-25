@@ -140,7 +140,7 @@ namespace SupladaSalonLayout
             {
                 if (dataQueue.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Please select an appointment to cancel.", "No Selection",
+                    MessageBox.Show("Please select an appointment to move back.", "No Selection",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -152,8 +152,8 @@ namespace SupladaSalonLayout
                 string customerName = $"{selectedRow.Cells["CustomerFirstName"].Value} {selectedRow.Cells["CustomerLastName"].Value}";
 
                 DialogResult result = MessageBox.Show(
-                    $"Are you sure you want to cancel the appointment for {customerName}?",
-                    "Confirm Cancellation",
+                    $"Remove {customerName}'s from Queue?",
+                    "Confirm Move",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
@@ -162,7 +162,7 @@ namespace SupladaSalonLayout
                     using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
                     {
                         connect.Open();
-                        string updateQuery = "UPDATE Appointments SET Status = 'Cancelled' WHERE AppointmentID = @AppointmentID";
+                        string updateQuery = "UPDATE Appointments SET Status = 'Confirmed' WHERE AppointmentID = @AppointmentID";
 
                         using (SqlCommand cmd = new SqlCommand(updateQuery, connect))
                         {
@@ -171,15 +171,25 @@ namespace SupladaSalonLayout
 
                             if (rowsAffected > 0)
                             {
-                                MessageBox.Show("Appointment cancelled successfully.", "Success",
+                                MessageBox.Show("Appointment moved back to Appointments successfully.", "Success",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                                 LoadQueue();
                                 RefreshDashboard();
+
+                                // Refresh AdminCreateAppointment form if it's open
+                                foreach (Form form in Application.OpenForms)
+                                {
+                                    if (form is AdminCreateAppointment)
+                                    {
+                                        ((AdminCreateAppointment)form).LoadAppointments();
+                                        break;
+                                    }
+                                }
                             }
                             else
                             {
-                                MessageBox.Show("Failed to cancel appointment.", "Error",
+                                MessageBox.Show("Failed to move appointment.", "Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
@@ -188,7 +198,7 @@ namespace SupladaSalonLayout
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error cancelling appointment: " + ex.Message, "Error",
+                MessageBox.Show("Error moving appointment: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -252,6 +262,79 @@ namespace SupladaSalonLayout
             {
                 MessageBox.Show("Error processing billing: " + ex.Message, 
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dataQueue.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please select an appointment to cancel.", "No Selection",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                DataGridViewRow selectedRow = dataQueue.SelectedRows[0];
+
+                int appointmentId = Convert.ToInt32(selectedRow.Cells["AppointmentID"].Value);
+
+                string customerName = $"{selectedRow.Cells["CustomerFirstName"].Value} {selectedRow.Cells["CustomerLastName"].Value}";
+
+                DialogResult result = MessageBox.Show(
+                    $"Are you sure you want to cancel the appointment for {customerName}?",
+                    "Confirm Cancellation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
+                    {
+                        connect.Open();
+                        string updateQuery = "UPDATE Appointments SET Status = 'Cancelled' WHERE AppointmentID = @AppointmentID";
+
+                        using (SqlCommand cmd = new SqlCommand(updateQuery, connect))
+                        {
+                            cmd.Parameters.AddWithValue("@AppointmentID", appointmentId);
+                            int rowsAffected = cmd.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                MessageBox.Show("Appointment cancelled successfully.", "Success",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                                LoadQueue();
+                                RefreshDashboard();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Failed to cancel appointment.", "Error",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error cancelling appointment: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnScheduledAppointments_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ViewReadyForQueue viewForm = new ViewReadyForQueue(currentUserID);
+                viewForm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error opening Ready for Queue view: " + ex.Message, "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

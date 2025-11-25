@@ -235,6 +235,62 @@ namespace SupladaSalonLayout
 
             try
             {
+                // Get the appointment date from the selected row
+                DataGridViewRow selectedRow = null;
+                foreach (DataGridViewRow row in dataAppointments.SelectedRows)
+                {
+                    if (row.Cells["AppointmentID"].Value != null && 
+                        Convert.ToInt32(row.Cells["AppointmentID"].Value) == selectedAppointmentID)
+                    {
+                        selectedRow = row;
+                        break;
+                    }
+                }
+
+                if (selectedRow == null)
+                {
+                    // If row not found, get appointment date from database
+                    using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
+                    {
+                        connect.Open();
+                        string getDateQuery = "SELECT AppointmentDate FROM Appointments WHERE AppointmentID = @AppointmentID";
+                        using (SqlCommand getDateCmd = new SqlCommand(getDateQuery, connect))
+                        {
+                            getDateCmd.Parameters.AddWithValue("@AppointmentID", selectedAppointmentID);
+                            object dateResult = getDateCmd.ExecuteScalar();
+                            
+                            if (dateResult != null && dateResult != DBNull.Value)
+                            {
+                                DateTime appointmentDate = Convert.ToDateTime(dateResult).Date;
+                                DateTime today = DateTime.Today;
+
+                                if (appointmentDate != today)
+                                {
+                                    MessageBox.Show("Only appointments scheduled for today can be moved to the queue.", 
+                                        "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Check date from selected row
+                    if (selectedRow.Cells["AppointmentDate"].Value != null)
+                    {
+                        DateTime appointmentDate = Convert.ToDateTime(selectedRow.Cells["AppointmentDate"].Value).Date;
+                        DateTime today = DateTime.Today;
+
+                        if (appointmentDate != today)
+                        {
+                            MessageBox.Show("Only appointments scheduled for today can be moved to the queue.", 
+                                "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
+
                 using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
                 {
                     connect.Open();

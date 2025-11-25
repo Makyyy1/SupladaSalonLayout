@@ -98,6 +98,7 @@ CREATE TABLE Transactions (
     Total             DECIMAL (10, 2) NULL,
     TransactionDate   DATETIME        DEFAULT (getdate()) NULL,
     ReportFilePath NVARCHAR(MAX) NULL,
+    TechnicianName NVARCHAR(100) NULL,
     PRIMARY KEY CLUSTERED ([TransactionID] ASC),
     FOREIGN KEY ([AppointmentID]) REFERENCES [dbo].[Appointments] ([AppointmentID]),
     FOREIGN KEY (PaymentModeID) REFERENCES PaymentModes(PaymentModeID)

@@ -474,7 +474,7 @@ namespace SupladaSalonLayout
                 {
                     connect.Open();
                     string query = @"SELECT COUNT(*) FROM Appointments 
-                                   WHERE Status NOT IN ('Cancelled') 
+                                   WHERE Status = 'Confirmed' 
                                    AND AppointmentDate = @AppointmentDate 
                                    AND CONVERT(varchar(8), AppointmentTime, 108) = CONVERT(varchar(8), @AppointmentTime, 108)";
 

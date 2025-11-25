@@ -103,6 +103,12 @@
     <Compile Include="AdminReports.Designer.cs">
       <DependentUpon>AdminReports.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewReadyForQueue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewReadyForQueue.Designer.cs">
+      <DependentUpon>ViewReadyForQueue.cs</DependentUpon>
+    </Compile>
     <Compile Include="AppointmentSoloService.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -243,6 +249,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdminReports.resx">
       <DependentUpon>AdminReports.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewReadyForQueue.resx">
+      <DependentUpon>ViewReadyForQueue.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AppointmentSoloService.resx">
       <DependentUpon>AppointmentSoloService.cs</DependentUpon>

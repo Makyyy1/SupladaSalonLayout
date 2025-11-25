@@ -79,6 +79,9 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.lblTotalService = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cbTechnicians = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -87,6 +90,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedProducts)).BeginInit();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).BeginInit();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -641,12 +645,45 @@
             this.lblTotalService.TabIndex = 46;
             this.lblTotalService.Text = "0.00";
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.cbTechnicians);
+            this.groupBox5.Controls.Add(this.label9);
+            this.groupBox5.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox5.Location = new System.Drawing.Point(10, 434);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(515, 89);
+            this.groupBox5.TabIndex = 57;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Technician";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(18, 43);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(85, 19);
+            this.label9.TabIndex = 37;
+            this.label9.Text = "Technician:";
+            // 
+            // cbTechnicians
+            // 
+            this.cbTechnicians.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTechnicians.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbTechnicians.FormattingEnabled = true;
+            this.cbTechnicians.Location = new System.Drawing.Point(220, 40);
+            this.cbTechnicians.Name = "cbTechnicians";
+            this.cbTechnicians.Size = new System.Drawing.Size(257, 27);
+            this.cbTechnicians.TabIndex = 82;
+            // 
             // AdminPayments
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(1638, 949);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -668,6 +705,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).EndInit();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -725,5 +764,8 @@
         private System.Windows.Forms.DataGridView dataAvailedProducts;
         private System.Windows.Forms.Button btnRemoveService;
         private System.Windows.Forms.Button btnRemoveProducts;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox cbTechnicians;
     }
 }

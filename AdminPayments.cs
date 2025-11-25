@@ -36,12 +36,16 @@ namespace SupladaSalonLayout
         public AdminPayments()
         {
             InitializeComponent();
+            datePicker.MinDate = DateTime.Today;
+            datePicker.Value = DateTime.Today;
+            TimePicker.Value = DateTime.Now;
             InitializeDataGridViews();
             WireUpEventHandlers();
             LoadCategories();
             LoadProducts();
             LoadDiscounts();
             LoadPaymentModes();
+            LoadTechnicians();
             LoadCurrentUserDetails();
         }
 
@@ -51,12 +55,23 @@ namespace SupladaSalonLayout
             currentUserID = userID;
             selectedAppointmentID = appointmentId;
             
+            // Set datePicker MinDate to prevent selecting past dates
+            datePicker.MinDate = DateTime.Today;
+            
+            // Set datePicker and TimePicker to current system date/time if no appointment is being loaded
+            if (appointmentId == 0)
+            {
+                datePicker.Value = DateTime.Today;
+                TimePicker.Value = DateTime.Now;
+            }
+            
             InitializeDataGridViews();
             WireUpEventHandlers();
             LoadCategories();
             LoadProducts();
             LoadDiscounts();
             LoadPaymentModes();
+            LoadTechnicians();
             LoadCurrentUserDetails();
             
             if (appointmentId > 0)
@@ -180,6 +195,41 @@ namespace SupladaSalonLayout
             }
         }
 
+        private void LoadTechnicians()
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
+                {
+                    conn.Open();
+                    string query = "SELECT TechnicianID, TechnicianName FROM Technicians ORDER BY TechnicianName";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            DataTable dt = new DataTable();
+                            dt.Load(reader);
+
+                            DataRow emptyRow = dt.NewRow();
+                            emptyRow["TechnicianID"] = 0;
+                            emptyRow["TechnicianName"] = "-- Select Technician --";
+                            dt.Rows.InsertAt(emptyRow, 0);
+
+                            cbTechnicians.DisplayMember = "TechnicianName";
+                            cbTechnicians.ValueMember = "TechnicianID";
+                            cbTechnicians.DataSource = dt;
+                            cbTechnicians.SelectedIndex = 0;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading technicians: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void pcClose_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -199,7 +249,8 @@ namespace SupladaSalonLayout
                                     a.AppointmentDate,
                                     a.AppointmentTime,
                                     a.[Service Name] as Services,
-                                    a.Status
+                                    a.Status,
+                                    a.TechnicianID
                                 FROM Appointments a
                                 WHERE a.AppointmentID = @AppointmentID";
 
@@ -218,7 +269,15 @@ namespace SupladaSalonLayout
                                 // Set appointment date and time
                                 if (DateTime.TryParse(reader["AppointmentDate"].ToString(), out DateTime apptDate))
                                 {
-                                    datePicker.Value = apptDate;
+                                    // If appointment date is in the past, set to today; otherwise use appointment date
+                                    if (apptDate < DateTime.Today)
+                                    {
+                                        datePicker.Value = DateTime.Today;
+                                    }
+                                    else
+                                    {
+                                        datePicker.Value = apptDate;
+                                    }
                                 }
                                 
                                 // Handle appointment time
@@ -240,6 +299,25 @@ namespace SupladaSalonLayout
                                 if (!string.IsNullOrEmpty(services))
                                 {
                                     LoadServicesToGrid(services);
+                                }
+
+                                // Load technician if assigned
+                                if (reader["TechnicianID"] != DBNull.Value)
+                                {
+                                    int technicianID = Convert.ToInt32(reader["TechnicianID"]);
+                                    // Set the selected technician in the combobox
+                                    foreach (object item in cbTechnicians.Items)
+                                    {
+                                        if (cbTechnicians.Items.IndexOf(item) > 0) // Skip the first empty item
+                                        {
+                                            DataRowView rowView = item as DataRowView;
+                                            if (rowView != null && Convert.ToInt32(rowView["TechnicianID"]) == technicianID)
+                                            {
+                                                cbTechnicians.SelectedItem = item;
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -695,11 +773,15 @@ namespace SupladaSalonLayout
                     return;
                 }
 
+                // Ask if user wants to print FIRST, before saving
+                DialogResult printChoice = MessageBox.Show("Do you want to print the sales summary?",
+                    "Print Sales Summary", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
                 DateTime paymentDate = DateTime.Now;
                 string reportsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "SalesReports");
                 Directory.CreateDirectory(reportsDirectory);
 
-                string defaultFileName = $"SalesSummary_{paymentDate:yyyyMMdd_HHmmss}.pdf";
+                string defaultFileName = $"SalesSummary_{paymentDate:yyyyMMdd}.pdf";
 
                 string pdfPath;
                 using (SaveFileDialog saveDialog = new SaveFileDialog()
@@ -724,12 +806,18 @@ namespace SupladaSalonLayout
                 MessageBox.Show("Sales summary saved successfully.", "Success",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                DialogResult printChoice = MessageBox.Show("Do you want to print the sales summary now?",
-                    "Print Sales Summary", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
+                // If user chose to print, open the PDF file
                 if (printChoice == DialogResult.Yes)
                 {
-                    PrintPdf(pdfPath);
+                    try
+                    {
+                        System.Diagnostics.Process.Start(pdfPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Unable to open PDF file: " + ex.Message, "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
 
                 ReturnToManageQueue();
@@ -838,6 +926,13 @@ namespace SupladaSalonLayout
                 return false;
             }
 
+            if (cbTechnicians.SelectedIndex <= 0)
+            {
+                MessageBox.Show("Please select a technician.", "Missing Information",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
             if (cbPayment.Text.Equals("GCash", StringComparison.OrdinalIgnoreCase) &&
                 string.IsNullOrWhiteSpace(txtReferenceNumber.Text))
             {
@@ -870,7 +965,9 @@ namespace SupladaSalonLayout
 
                 document.Add(new Paragraph($"Date: {paymentDate:MMMM dd, yyyy hh:mm tt}", normalFont));
                 document.Add(new Paragraph($"Processed By: {currentRole} {currentUsername}", normalFont));
-                document.Add(new Paragraph($"Reference #: {txtReferenceNumber.Text}", normalFont));
+                string technicianName = cbTechnicians.SelectedIndex > 0 ? cbTechnicians.Text : "None";
+                document.Add(new Paragraph($"Technician: {technicianName}", normalFont));
+                document.Add(new Paragraph($"Gcash Reference #: {txtReferenceNumber.Text}", normalFont));
                 document.Add(Chunk.NEWLINE);
 
                 document.Add(new Paragraph("Customer Information", sectionFont));
@@ -1004,15 +1101,16 @@ namespace SupladaSalonLayout
             using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
             {
                 conn.Open();
+                string technicianName = cbTechnicians.SelectedIndex > 0 ? cbTechnicians.Text : null;
                 string insertQuery = @"
                     INSERT INTO Transactions 
                     (AppointmentID, PaymentModeID, CustomerFirstName, CustomerLastName, CustomerContact, 
                      AppointmentDate, AppointmentTime, Service1, Service1Price, Service2, Service2Price, 
-                     ProductName, ProductPrice, DiscountType, DiscountAmount, Subtotal, Total, TransactionDate, UserID, ReferenceNumber, ReportFilePath)
+                     ProductName, ProductPrice, DiscountType, DiscountAmount, Subtotal, Total, TransactionDate, UserID, ReferenceNumber, ReportFilePath, TechnicianName)
                     VALUES
                     (@AppointmentID, @PaymentModeID, @CustomerFirstName, @CustomerLastName, @CustomerContact,
                      @AppointmentDate, @AppointmentTime, @Service1, @Service1Price, @Service2, @Service2Price,
-                     @ProductName, @ProductPrice, @DiscountType, @DiscountAmount, @Subtotal, @Total, @TransactionDate, @UserID, @ReferenceNumber, @ReportFilePath)";
+                     @ProductName, @ProductPrice, @DiscountType, @DiscountAmount, @Subtotal, @Total, @TransactionDate, @UserID, @ReferenceNumber, @ReportFilePath, @TechnicianName)";
 
                 using (SqlCommand cmd = new SqlCommand(insertQuery, conn))
                 {
@@ -1037,6 +1135,7 @@ namespace SupladaSalonLayout
                     cmd.Parameters.AddWithValue("@UserID", currentUserID);
                     cmd.Parameters.AddWithValue("@ReferenceNumber", txtReferenceNumber.Text);
                     cmd.Parameters.AddWithValue("@ReportFilePath", pdfPath);
+                    cmd.Parameters.AddWithValue("@TechnicianName", string.IsNullOrEmpty(technicianName) ? (object)DBNull.Value : technicianName);
 
                     cmd.ExecuteNonQuery();
                 }
