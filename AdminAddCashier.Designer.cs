@@ -151,7 +151,7 @@ namespace SupladaSalonLayout
             // txtAddress
             // 
             this.txtAddress.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtAddress.Location = new System.Drawing.Point(193, 42);
+            this.txtAddress.Location = new System.Drawing.Point(193, 122);
             this.txtAddress.Multiline = true;
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(350, 30);
@@ -187,7 +187,7 @@ namespace SupladaSalonLayout
             // txtFullName
             // 
             this.txtFullName.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtFullName.Location = new System.Drawing.Point(193, 115);
+            this.txtFullName.Location = new System.Drawing.Point(193, 42);
             this.txtFullName.Name = "txtFullName";
             this.txtFullName.Size = new System.Drawing.Size(350, 27);
             this.txtFullName.TabIndex = 14;

@@ -41,6 +41,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnPrintReports = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lblTotalCustomers = new System.Windows.Forms.Label();
+            this.cbSortUsers = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataReports)).BeginInit();
             this.SuspendLayout();
             // 
@@ -108,7 +113,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label10.Location = new System.Drawing.Point(1227, 869);
+            this.label10.Location = new System.Drawing.Point(1247, 847);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(211, 39);
             this.label10.TabIndex = 43;
@@ -118,7 +123,7 @@
             // 
             this.lblTotalEarnings.AutoSize = true;
             this.lblTotalEarnings.Font = new System.Drawing.Font("Calibri", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotalEarnings.Location = new System.Drawing.Point(1444, 869);
+            this.lblTotalEarnings.Location = new System.Drawing.Point(1464, 847);
             this.lblTotalEarnings.Name = "lblTotalEarnings";
             this.lblTotalEarnings.Size = new System.Drawing.Size(67, 39);
             this.lblTotalEarnings.TabIndex = 44;
@@ -179,6 +184,59 @@
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // btnPrintReports
+            // 
+            this.btnPrintReports.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
+            this.btnPrintReports.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnPrintReports.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrintReports.Location = new System.Drawing.Point(1112, 852);
+            this.btnPrintReports.Name = "btnPrintReports";
+            this.btnPrintReports.Size = new System.Drawing.Size(129, 38);
+            this.btnPrintReports.TabIndex = 68;
+            this.btnPrintReports.Text = "Print";
+            this.btnPrintReports.UseVisualStyleBackColor = false;
+            this.btnPrintReports.Click += new System.EventHandler(this.btnPrintReports_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(1276, 896);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(177, 29);
+            this.label5.TabIndex = 69;
+            this.label5.Text = "Customer Visits:";
+            // 
+            // lblTotalCustomers
+            // 
+            this.lblTotalCustomers.AutoSize = true;
+            this.lblTotalCustomers.Font = new System.Drawing.Font("Calibri", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTotalCustomers.Location = new System.Drawing.Point(1466, 896);
+            this.lblTotalCustomers.Name = "lblTotalCustomers";
+            this.lblTotalCustomers.Size = new System.Drawing.Size(48, 29);
+            this.lblTotalCustomers.TabIndex = 70;
+            this.lblTotalCustomers.Text = "-----";
+            // 
+            // cbSortUsers
+            // 
+            this.cbSortUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbSortUsers.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbSortUsers.FormattingEnabled = true;
+            this.cbSortUsers.Location = new System.Drawing.Point(997, 71);
+            this.cbSortUsers.Name = "cbSortUsers";
+            this.cbSortUsers.Size = new System.Drawing.Size(197, 27);
+            this.cbSortUsers.TabIndex = 71;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(894, 74);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(97, 19);
+            this.label6.TabIndex = 72;
+            this.label6.Text = "Sort by User:";
+            // 
             // AdminReports
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -186,6 +244,11 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(1638, 949);
             this.ControlBox = false;
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.cbSortUsers);
+            this.Controls.Add(this.lblTotalCustomers);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.btnPrintReports);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -216,5 +279,10 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnPrintReports;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lblTotalCustomers;
+        private System.Windows.Forms.ComboBox cbSortUsers;
+        private System.Windows.Forms.Label label6;
     }
 }

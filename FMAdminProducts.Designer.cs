@@ -41,11 +41,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtSearchProducts = new System.Windows.Forms.TextBox();
             this.dataProducts = new System.Windows.Forms.DataGridView();
-            this.ProductName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ProductDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ProductPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.EditColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.RemoveColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnAddProduct = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -59,6 +54,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.pcClose = new System.Windows.Forms.PictureBox();
             this.btnPrint = new System.Windows.Forms.Button();
+            this.ProductName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProductDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ProductPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EditColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataProducts)).BeginInit();
@@ -141,8 +140,7 @@
             this.ProductName,
             this.ProductDescription,
             this.ProductPrice,
-            this.EditColumn,
-            this.RemoveColumn});
+            this.EditColumn});
             this.dataProducts.Cursor = System.Windows.Forms.Cursors.Hand;
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
@@ -164,52 +162,6 @@
             this.dataProducts.Size = new System.Drawing.Size(912, 823);
             this.dataProducts.TabIndex = 3;
             this.dataProducts.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataProducts_CellClick);
-            // 
-            // ProductName
-            // 
-            this.ProductName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ProductName.DataPropertyName = "ProductName";
-            this.ProductName.HeaderText = "Product Name";
-            this.ProductName.Name = "ProductName";
-            this.ProductName.ReadOnly = true;
-            // 
-            // ProductDescription
-            // 
-            this.ProductDescription.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ProductDescription.DataPropertyName = "ProductDescription";
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ProductDescription.DefaultCellStyle = dataGridViewCellStyle3;
-            this.ProductDescription.HeaderText = "Description";
-            this.ProductDescription.Name = "ProductDescription";
-            this.ProductDescription.ReadOnly = true;
-            // 
-            // ProductPrice
-            // 
-            this.ProductPrice.DataPropertyName = "ProductPrice";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.ProductPrice.DefaultCellStyle = dataGridViewCellStyle4;
-            this.ProductPrice.HeaderText = "Price";
-            this.ProductPrice.Name = "ProductPrice";
-            this.ProductPrice.ReadOnly = true;
-            this.ProductPrice.Width = 68;
-            // 
-            // EditColumn
-            // 
-            this.EditColumn.HeaderText = "Edit";
-            this.EditColumn.Image = ((System.Drawing.Image)(resources.GetObject("EditColumn.Image")));
-            this.EditColumn.Name = "EditColumn";
-            this.EditColumn.ReadOnly = true;
-            this.EditColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.EditColumn.Width = 42;
-            // 
-            // RemoveColumn
-            // 
-            this.RemoveColumn.HeaderText = "Remove";
-            this.RemoveColumn.Image = ((System.Drawing.Image)(resources.GetObject("RemoveColumn.Image")));
-            this.RemoveColumn.Name = "RemoveColumn";
-            this.RemoveColumn.ReadOnly = true;
-            this.RemoveColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.RemoveColumn.Width = 70;
             // 
             // groupBox1
             // 
@@ -365,6 +317,43 @@
             this.btnPrint.UseVisualStyleBackColor = false;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
+            // ProductName
+            // 
+            this.ProductName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ProductName.DataPropertyName = "ProductName";
+            this.ProductName.HeaderText = "Product Name";
+            this.ProductName.Name = "ProductName";
+            this.ProductName.ReadOnly = true;
+            // 
+            // ProductDescription
+            // 
+            this.ProductDescription.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ProductDescription.DataPropertyName = "ProductDescription";
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ProductDescription.DefaultCellStyle = dataGridViewCellStyle3;
+            this.ProductDescription.HeaderText = "Description";
+            this.ProductDescription.Name = "ProductDescription";
+            this.ProductDescription.ReadOnly = true;
+            // 
+            // ProductPrice
+            // 
+            this.ProductPrice.DataPropertyName = "ProductPrice";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ProductPrice.DefaultCellStyle = dataGridViewCellStyle4;
+            this.ProductPrice.HeaderText = "Price";
+            this.ProductPrice.Name = "ProductPrice";
+            this.ProductPrice.ReadOnly = true;
+            this.ProductPrice.Width = 68;
+            // 
+            // EditColumn
+            // 
+            this.EditColumn.HeaderText = "Edit";
+            this.EditColumn.Image = ((System.Drawing.Image)(resources.GetObject("EditColumn.Image")));
+            this.EditColumn.Name = "EditColumn";
+            this.EditColumn.ReadOnly = true;
+            this.EditColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.EditColumn.Width = 42;
+            // 
             // FMAdminProducts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -413,11 +402,10 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnAddProduct;
         private System.Windows.Forms.PictureBox pcClose;
+        private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProductName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProductDescription;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProductPrice;
         private System.Windows.Forms.DataGridViewImageColumn EditColumn;
-        private System.Windows.Forms.DataGridViewImageColumn RemoveColumn;
-        private System.Windows.Forms.Button btnPrint;
     }
 }

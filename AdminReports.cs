@@ -4,10 +4,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextFont = iTextSharp.text.Font;
+using iTextBaseColor = iTextSharp.text.BaseColor;
 
 namespace SupladaSalonLayout
 {
@@ -19,6 +24,7 @@ namespace SupladaSalonLayout
         {
             InitializeComponent();
             InitializeDatePickers();
+            LoadUserFilter();
             LoadTransactions();
         }
 
@@ -27,6 +33,22 @@ namespace SupladaSalonLayout
             InitializeComponent();
             currentUserID = userID;
             InitializeDatePickers();
+            LoadUserFilter();
+            LoadTransactions();
+        }
+
+        private void LoadUserFilter()
+        {
+            cbSortUsers.Items.Clear();
+            cbSortUsers.Items.Add("All");
+            cbSortUsers.Items.Add("Admin");
+            cbSortUsers.Items.Add("Cashier");
+            cbSortUsers.SelectedIndex = 0;
+            cbSortUsers.SelectedIndexChanged += cbSortUsers_SelectedIndexChanged;
+        }
+
+        private void cbSortUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
             LoadTransactions();
         }
 
@@ -87,6 +109,7 @@ namespace SupladaSalonLayout
                     // Initialize Transactions table to add UserID if needed
                     InitializeTransactionsTable();
 
+                    string roleFilter = cbSortUsers.SelectedItem?.ToString();
                     string query = @"SELECT 
                                         t.TransactionID,
                                         t.CustomerFirstName + ' ' + t.CustomerLastName AS CustomerName,
@@ -106,13 +129,22 @@ namespace SupladaSalonLayout
                                     LEFT JOIN Appointments a ON t.AppointmentID = a.AppointmentID
                                     LEFT JOIN Users u ON COALESCE(t.UserID, a.UserID) = u.UserID
                                     WHERE CAST(t.TransactionDate AS DATE) >= @StartDate 
-                                    AND CAST(t.TransactionDate AS DATE) <= @EndDate
-                                    ORDER BY t.TransactionDate DESC";
+                                    AND CAST(t.TransactionDate AS DATE) <= @EndDate";
+
+                    if (!string.IsNullOrEmpty(roleFilter) && roleFilter != "All")
+                    {
+                        query += " AND u.Role = @Role";
+                    }
+                    query += " ORDER BY t.TransactionDate DESC";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@StartDate", dtpStartDate.Value.Date);
                         cmd.Parameters.AddWithValue("@EndDate", dtpEndDate.Value.Date);
+                        if (!string.IsNullOrEmpty(roleFilter) && roleFilter != "All")
+                        {
+                            cmd.Parameters.AddWithValue("@Role", roleFilter);
+                        }
 
                         SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                         DataTable dt = new DataTable();
@@ -167,8 +199,8 @@ namespace SupladaSalonLayout
                             dataReports.MultiSelect = false;
                         }
 
-                        // Calculate total earnings
-                        CalculateTotalEarnings();
+                        // Calculate totals
+                        CalculateTotals();
                     }
                 }
             }
@@ -181,33 +213,52 @@ namespace SupladaSalonLayout
             }
         }
 
-        private void CalculateTotalEarnings()
+        private void CalculateTotals()
         {
             try
             {
                 using (SqlConnection conn = new SqlConnection(DB_Salon.connectionString))
                 {
                     conn.Open();
-                    string query = @"SELECT ISNULL(SUM(Total), 0) 
+                    string roleFilter = cbSortUsers.SelectedItem?.ToString();
+                    
+                    string query = @"SELECT ISNULL(SUM(t.Total), 0), COUNT(t.TransactionID)
                                     FROM Transactions t
-                                    WHERE CAST(TransactionDate AS DATE) >= @StartDate 
-                                    AND CAST(TransactionDate AS DATE) <= @EndDate";
+                                    LEFT JOIN Appointments a ON t.AppointmentID = a.AppointmentID
+                                    LEFT JOIN Users u ON COALESCE(t.UserID, a.UserID) = u.UserID
+                                    WHERE CAST(t.TransactionDate AS DATE) >= @StartDate 
+                                    AND CAST(t.TransactionDate AS DATE) <= @EndDate";
+
+                    if (!string.IsNullOrEmpty(roleFilter) && roleFilter != "All")
+                    {
+                        query += " AND u.Role = @Role";
+                    }
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
                         cmd.Parameters.AddWithValue("@StartDate", dtpStartDate.Value.Date);
                         cmd.Parameters.AddWithValue("@EndDate", dtpEndDate.Value.Date);
+                        if (!string.IsNullOrEmpty(roleFilter) && roleFilter != "All")
+                        {
+                            cmd.Parameters.AddWithValue("@Role", roleFilter);
+                        }
 
-                        object result = cmd.ExecuteScalar();
-                        decimal totalEarnings = result != null ? Convert.ToDecimal(result) : 0;
-
-                        lblTotalEarnings.Text = $"₱{totalEarnings:N2}";
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                decimal totalEarnings = reader.GetDecimal(0);
+                                int totalCustomers = reader.GetInt32(1);
+                                lblTotalEarnings.Text = $"₱{totalEarnings:N2}";
+                                lblTotalCustomers.Text = totalCustomers.ToString();
+                            }
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error calculating earnings: " + ex.Message,
+                MessageBox.Show("Error calculating totals: " + ex.Message,
                                "Error",
                                MessageBoxButtons.OK,
                                MessageBoxIcon.Error);
@@ -226,6 +277,118 @@ namespace SupladaSalonLayout
             }
 
             LoadTransactions();
+        }
+
+        private void btnPrintReports_Click(object sender, EventArgs e)
+        {
+            if (dataReports.Rows.Count == 0)
+            {
+                MessageBox.Show("No data to print.", "No Data", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                string defaultFileName = $"TransactionReport_{dtpStartDate.Value:yyyyMMdd}_to_{dtpEndDate.Value:yyyyMMdd}.pdf";
+                string defaultFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports");
+
+                if (!Directory.Exists(defaultFolderPath))
+                {
+                    Directory.CreateDirectory(defaultFolderPath);
+                }
+
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF files (*.pdf)|*.pdf",
+                    FileName = defaultFileName,
+                    InitialDirectory = defaultFolderPath,
+                    Title = "Save Transaction Report PDF"
+                };
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    GenerateReportPdf(saveFileDialog.FileName);
+                    MessageBox.Show("Report saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    DialogResult printResult = MessageBox.Show("Do you want to print the report?", "Print", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (printResult == DialogResult.Yes)
+                    {
+                        System.Diagnostics.Process.Start(saveFileDialog.FileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error generating report: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void GenerateReportPdf(string filePath)
+        {
+            Document doc = new Document(PageSize.A4.Rotate(), 25, 25, 30, 30);
+            PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+            doc.Open();
+
+            iTextFont titleFont = new iTextFont(iTextFont.FontFamily.HELVETICA, 18, iTextFont.BOLD);
+            iTextFont headerFont = new iTextFont(iTextFont.FontFamily.HELVETICA, 10, iTextFont.BOLD, iTextBaseColor.WHITE);
+            iTextFont cellFont = new iTextFont(iTextFont.FontFamily.HELVETICA, 9);
+            iTextFont summaryFont = new iTextFont(iTextFont.FontFamily.HELVETICA, 12, iTextFont.BOLD);
+
+            // Title
+            Paragraph title = new Paragraph("Transaction Report", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            doc.Add(title);
+
+            // Date Range
+            string roleFilter = cbSortUsers.SelectedItem?.ToString() ?? "All";
+            Paragraph dateRange = new Paragraph($"From: {dtpStartDate.Value:MM/dd/yyyy} To: {dtpEndDate.Value:MM/dd/yyyy}  |  Filter: {roleFilter}", cellFont);
+            dateRange.Alignment = Element.ALIGN_CENTER;
+            dateRange.SpacingAfter = 15;
+            doc.Add(dateRange);
+
+            // Table
+            PdfPTable table = new PdfPTable(10);
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 12, 10, 10, 15, 8, 8, 10, 8, 8, 11 });
+
+            string[] headers = { "Customer", "Contact", "Date", "Services", "Product", "Discount", "Payment", "Ref #", "Total", "Processed By" };
+            foreach (string header in headers)
+            {
+                PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.BackgroundColor = new iTextBaseColor(50, 50, 50);
+                cell.HorizontalAlignment = Element.ALIGN_CENTER;
+                cell.Padding = 5;
+                table.AddCell(cell);
+            }
+
+            foreach (DataGridViewRow row in dataReports.Rows)
+            {
+                if (row.IsNewRow) continue;
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["CustomerName"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["CustomerContact"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["AppointmentDate"].Value != null ? Convert.ToDateTime(row.Cells["AppointmentDate"].Value).ToString("MM/dd/yyyy") : "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["Service1"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["ProductName"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["DiscountType"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["PaymentMode"].Value?.ToString() ?? "", cellFont)));
+                table.AddCell(new PdfPCell(new Phrase(row.Cells["ReferenceNumber"].Value?.ToString() ?? "", cellFont)));
+                
+                PdfPCell totalCell = new PdfPCell(new Phrase(row.Cells["Total"].Value != null ? $"₱{Convert.ToDecimal(row.Cells["Total"].Value):N2}" : "", cellFont));
+                totalCell.HorizontalAlignment = Element.ALIGN_RIGHT;
+                table.AddCell(totalCell);
+                
+                table.AddCell(new PdfPCell(new Phrase($"{row.Cells["ProcessedBy"].Value} ({row.Cells["ProcessedRole"].Value})", cellFont)));
+            }
+
+            doc.Add(table);
+
+            // Summary
+            doc.Add(new Paragraph("\n"));
+            Paragraph summary = new Paragraph($"Total Customers: {lblTotalCustomers.Text}     |     Total Earnings: {lblTotalEarnings.Text}", summaryFont);
+            summary.Alignment = Element.ALIGN_RIGHT;
+            doc.Add(summary);
+
+            doc.Close();
         }
     }
 }

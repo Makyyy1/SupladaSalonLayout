@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminManageQueue));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pcClose = new System.Windows.Forms.PictureBox();
@@ -44,6 +44,7 @@
             this.CustomerContact = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnReadyBilling = new System.Windows.Forms.Button();
+            this.btnScheduledAppointments = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataQueue)).BeginInit();
             this.SuspendLayout();
@@ -85,7 +86,7 @@
             this.btnCancelAppointment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
             this.btnCancelAppointment.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCancelAppointment.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancelAppointment.Location = new System.Drawing.Point(1388, 128);
+            this.btnCancelAppointment.Location = new System.Drawing.Point(1388, 197);
             this.btnCancelAppointment.Name = "btnCancelAppointment";
             this.btnCancelAppointment.Size = new System.Drawing.Size(238, 38);
             this.btnCancelAppointment.TabIndex = 33;
@@ -97,20 +98,20 @@
             // 
             this.dataQueue.AllowUserToAddRows = false;
             this.dataQueue.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            this.dataQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            this.dataQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataQueue.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataQueue.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataQueue.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.dataQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataQueue.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataQueue.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dataQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.AppointmentDate,
@@ -120,14 +121,14 @@
             this.CustomerContact,
             this.Status});
             this.dataQueue.Cursor = System.Windows.Forms.Cursors.Hand;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(188)))), ((int)(((byte)(125)))));
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataQueue.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(188)))), ((int)(((byte)(125)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataQueue.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataQueue.EnableHeadersVisualStyles = false;
             this.dataQueue.Location = new System.Drawing.Point(3, 63);
             this.dataQueue.Name = "dataQueue";
@@ -194,7 +195,7 @@
             this.btnReadyBilling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
             this.btnReadyBilling.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnReadyBilling.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReadyBilling.Location = new System.Drawing.Point(1388, 81);
+            this.btnReadyBilling.Location = new System.Drawing.Point(1388, 150);
             this.btnReadyBilling.Name = "btnReadyBilling";
             this.btnReadyBilling.Size = new System.Drawing.Size(238, 41);
             this.btnReadyBilling.TabIndex = 40;
@@ -202,12 +203,25 @@
             this.btnReadyBilling.UseVisualStyleBackColor = false;
             this.btnReadyBilling.Click += new System.EventHandler(this.btnReadyBilling_Click);
             // 
+            // btnScheduledAppointments
+            // 
+            this.btnScheduledAppointments.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
+            this.btnScheduledAppointments.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnScheduledAppointments.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnScheduledAppointments.Location = new System.Drawing.Point(1388, 63);
+            this.btnScheduledAppointments.Name = "btnScheduledAppointments";
+            this.btnScheduledAppointments.Size = new System.Drawing.Size(238, 41);
+            this.btnScheduledAppointments.TabIndex = 41;
+            this.btnScheduledAppointments.Text = "View Appointments";
+            this.btnScheduledAppointments.UseVisualStyleBackColor = false;
+            // 
             // AdminManageQueue
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(1638, 949);
+            this.Controls.Add(this.btnScheduledAppointments);
             this.Controls.Add(this.btnReadyBilling);
             this.Controls.Add(this.dataQueue);
             this.Controls.Add(this.btnCancelAppointment);
@@ -238,5 +252,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CustomerContact;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
         private System.Windows.Forms.Button btnReadyBilling;
+        private System.Windows.Forms.Button btnScheduledAppointments;
     }
 }
