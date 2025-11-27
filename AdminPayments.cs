@@ -91,6 +91,10 @@ namespace SupladaSalonLayout
             cbServiceCategory.SelectedIndexChanged += cbServiceCategory_SelectedIndexChanged;
             cbDiscounts.SelectedIndexChanged += cbDiscounts_SelectedIndexChanged;
             cbPayment.SelectedIndexChanged += cbPayment_SelectedIndexChanged;
+            dataAvailedProducts.CellValueChanged += dataAvailedProducts_CellValueChanged;
+            txtDiscountPrice.TextChanged += txtDiscountPrice_TextChanged;
+            txtDiscountPrice.KeyPress += txtDiscountPrice_KeyPress;
+            txtDiscountPrice.Leave += txtDiscountPrice_Leave;
         }
 
         private void LoadCurrentUserDetails()
@@ -146,14 +150,18 @@ namespace SupladaSalonLayout
             productsTable = new DataTable();
             productsTable.Columns.Add("ProductName", typeof(string));
             productsTable.Columns.Add("ProductPrice", typeof(decimal));
+            productsTable.Columns.Add("Quantity", typeof(int));
             dataAvailedProducts.DataSource = productsTable;
             dataAvailedProducts.Columns["ProductName"].HeaderText = "Product Name";
             dataAvailedProducts.Columns["ProductName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataAvailedProducts.Columns["ProductPrice"].HeaderText = "Price";
+            dataAvailedProducts.Columns["ProductPrice"].HeaderText = "Unit Price";
             dataAvailedProducts.Columns["ProductPrice"].DefaultCellStyle.Format = "N2";
             dataAvailedProducts.Columns["ProductPrice"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dataAvailedProducts.Columns["ProductPrice"].ReadOnly = true;
+            dataAvailedProducts.Columns["Quantity"].HeaderText = "Quantity";
+            dataAvailedProducts.Columns["Quantity"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataAvailedProducts.Columns["Quantity"].ReadOnly = false;
             dataAvailedProducts.AllowUserToAddRows = false;
-            dataAvailedProducts.ReadOnly = true;
         }
 
         private void LoadPaymentModes()
@@ -275,8 +283,8 @@ namespace SupladaSalonLayout
                                         datePicker.Value = DateTime.Today;
                                     }
                                     else
-                                    {
-                                        datePicker.Value = apptDate;
+                                {
+                                    datePicker.Value = apptDate;
                                     }
                                 }
                                 
@@ -597,6 +605,10 @@ namespace SupladaSalonLayout
                             cbDiscounts.ValueMember = "DiscountID";
                             cbDiscounts.DataSource = dt;
                             cbDiscounts.Tag = dt; // Store DataTable to access DiscountAmount
+                            
+                            // Initialize discount textbox
+                            txtDiscountPrice.Text = "0.00";
+                            discountAmount = 0;
                         }
                     }
                 }
@@ -620,23 +632,103 @@ namespace SupladaSalonLayout
                     if (rows.Length > 0)
                     {
                         discountAmount = Convert.ToDecimal(rows[0]["DiscountAmount"]);
-                    }
-                    else
-                    {
-                        discountAmount = 0;
+                        txtDiscountPrice.Text = discountAmount.ToString("N2");
+            }
+            else
+            {
+                discountAmount = 0;
+                        txtDiscountPrice.Text = "0.00";
                     }
                 }
                 else
                 {
                     discountAmount = 0;
+                    txtDiscountPrice.Text = "0.00";
                 }
             }
             else
             {
                 discountAmount = 0;
+                txtDiscountPrice.Text = "0.00";
             }
 
             CalculateTotals();
+        }
+
+        private void txtDiscountPrice_TextChanged(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(txtDiscountPrice.Text, out decimal parsedDiscount))
+            {
+                if (parsedDiscount < 0)
+                {
+                    MessageBox.Show("Discount price cannot be negative.", "Invalid Discount",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDiscountPrice.Text = "0.00";
+                    discountAmount = 0;
+                    lblDiscountPrice.Text = "0.00";
+                    CalculateTotals();
+                    return;
+                }
+                
+                discountAmount = parsedDiscount;
+                lblDiscountPrice.Text = discountAmount.ToString("N2");
+                CalculateTotals();
+            }
+            else if (string.IsNullOrWhiteSpace(txtDiscountPrice.Text))
+            {
+                discountAmount = 0;
+                lblDiscountPrice.Text = "0.00";
+                CalculateTotals();
+            }
+        }
+
+        private void txtDiscountPrice_Leave(object sender, EventArgs e)
+        {
+            // Validate that discount price is not zero when a discount is selected
+            if (cbDiscounts.SelectedIndex > 0)
+            {
+                if (string.IsNullOrWhiteSpace(txtDiscountPrice.Text) || 
+                    !decimal.TryParse(txtDiscountPrice.Text, out decimal discountValue) || 
+                    discountValue <= 0)
+                {
+                    MessageBox.Show("Discount price must be greater than zero when a discount is selected.", 
+                        "Invalid Discount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDiscountPrice.Focus();
+                    
+                    // Reset to the discount amount from the combobox if available
+                    if (cbDiscounts.Tag is DataTable dt && cbDiscounts.SelectedIndex > 0)
+                    {
+                        int discountID = Convert.ToInt32(cbDiscounts.SelectedValue);
+                        DataRow[] rows = dt.Select($"DiscountID = {discountID}");
+                        if (rows.Length > 0)
+                        {
+                            decimal originalDiscount = Convert.ToDecimal(rows[0]["DiscountAmount"]);
+                            if (originalDiscount > 0)
+                            {
+                                txtDiscountPrice.Text = originalDiscount.ToString("N2");
+                                discountAmount = originalDiscount;
+                                lblDiscountPrice.Text = discountAmount.ToString("N2");
+                                CalculateTotals();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void txtDiscountPrice_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow only numbers, decimal point, and backspace
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
+            {
+                e.Handled = true;
+            }
+
+            // Allow only one decimal point
+            if (e.KeyChar == '.' && (sender as TextBox).Text.IndexOf('.') > -1)
+            {
+                e.Handled = true;
+            }
         }
 
         private void CalculateTotals()
@@ -654,13 +746,15 @@ namespace SupladaSalonLayout
                 }
                 lblTotalService.Text = totalServices.ToString("N2");
 
-                // Calculate total products
+                // Calculate total products (price * quantity)
                 decimal totalProducts = 0;
                 foreach (DataRow row in productsTable.Rows)
                 {
-                    if (row["ProductPrice"] != DBNull.Value)
+                    if (row["ProductPrice"] != DBNull.Value && row["Quantity"] != DBNull.Value)
                     {
-                        totalProducts += Convert.ToDecimal(row["ProductPrice"]);
+                        decimal unitPrice = Convert.ToDecimal(row["ProductPrice"]);
+                        int quantity = Convert.ToInt32(row["Quantity"]);
+                        totalProducts += unitPrice * quantity;
                     }
                 }
                 lblTotalProducts.Text = totalProducts.ToString("N2");
@@ -687,6 +781,7 @@ namespace SupladaSalonLayout
         {
             cbDiscounts.SelectedIndex = 0;
             discountAmount = 0;
+            txtDiscountPrice.Text = "0.00";
             CalculateTotals();
         }
 
@@ -738,9 +833,17 @@ namespace SupladaSalonLayout
 
                                 if (!exists)
                                 {
-                                    productsTable.Rows.Add(productName, productPrice);
+                                    int quantity = (int)numericQuantity.Value;
+                                    if (quantity <= 0)
+                                    {
+                                        MessageBox.Show("Please enter a valid quantity (greater than 0).", "Invalid Quantity",
+                                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        return;
+                                    }
+                                    productsTable.Rows.Add(productName, productPrice, quantity);
                                     CalculateTotals();
                                     cbProducts.SelectedIndex = 0; // Reset selection
+                                    numericQuantity.Value = 1; // Reset quantity to 1
                                 }
                                 else
                                 {
@@ -941,6 +1044,20 @@ namespace SupladaSalonLayout
                 return false;
             }
 
+            // Validate discount price - if a discount is selected, it cannot be zero
+            if (cbDiscounts.SelectedIndex > 0)
+            {
+                if (string.IsNullOrWhiteSpace(txtDiscountPrice.Text) || 
+                    !decimal.TryParse(txtDiscountPrice.Text, out decimal discountValue) || 
+                    discountValue <= 0)
+                {
+                    MessageBox.Show("Please enter a valid discount amount greater than zero.", "Invalid Discount",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtDiscountPrice.Focus();
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -999,12 +1116,14 @@ namespace SupladaSalonLayout
                 document.Add(Chunk.NEWLINE);
 
                 document.Add(new Paragraph("Availed Products", sectionFont));
-                PdfPTable productsPdfTable = new PdfPTable(2);
+                PdfPTable productsPdfTable = new PdfPTable(4);
                 productsPdfTable.WidthPercentage = 100;
-                productsPdfTable.SetWidths(new float[] { 70f, 30f });
+                productsPdfTable.SetWidths(new float[] { 40f, 20f, 20f, 20f });
                 productsPdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
                 productsPdfTable.AddCell(GetHeaderCell("Product"));
-                productsPdfTable.AddCell(GetHeaderCell("Price"));
+                productsPdfTable.AddCell(GetHeaderCell("Unit Price"));
+                productsPdfTable.AddCell(GetHeaderCell("Quantity"));
+                productsPdfTable.AddCell(GetHeaderCell("Total"));
 
                 decimal totalProducts = 0;
                 if (productsTable.Rows.Count > 0)
@@ -1012,17 +1131,21 @@ namespace SupladaSalonLayout
                     foreach (DataRow row in productsTable.Rows)
                     {
                         string productName = row["ProductName"].ToString();
-                        decimal price = Convert.ToDecimal(row["ProductPrice"]);
-                        totalProducts += price;
+                        decimal unitPrice = Convert.ToDecimal(row["ProductPrice"]);
+                        int quantity = Convert.ToInt32(row["Quantity"]);
+                        decimal rowTotal = unitPrice * quantity;
+                        totalProducts += rowTotal;
                         productsPdfTable.AddCell(GetBodyCell(productName));
-                        productsPdfTable.AddCell(GetBodyCell(price.ToString("N2"), Element.ALIGN_RIGHT));
+                        productsPdfTable.AddCell(GetBodyCell(unitPrice.ToString("N2"), Element.ALIGN_RIGHT));
+                        productsPdfTable.AddCell(GetBodyCell(quantity.ToString(), Element.ALIGN_CENTER));
+                        productsPdfTable.AddCell(GetBodyCell(rowTotal.ToString("N2"), Element.ALIGN_RIGHT));
                     }
                 }
                 else
                 {
                     PdfPCell noProductCell = new PdfPCell(new Phrase("No add-on products availed.", normalFont))
                     {
-                        Colspan = 2,
+                        Colspan = 4,
                         HorizontalAlignment = Element.ALIGN_LEFT,
                         Padding = 5f
                     };
@@ -1076,11 +1199,12 @@ namespace SupladaSalonLayout
         private PdfPCell GetBodyCell(string text, int alignment = Element.ALIGN_LEFT)
         {
             iTextFont bodyFont = FontFactory.GetFont(FontFactory.HELVETICA, 11);
-            return new PdfPCell(new Phrase(text, bodyFont))
+            PdfPCell cell = new PdfPCell(new Phrase(text, bodyFont))
             {
                 Padding = 5f,
                 HorizontalAlignment = alignment
             };
+            return cell;
         }
 
         private void SaveTransactionRecord(string pdfPath, DateTime paymentDate)
@@ -1089,9 +1213,11 @@ namespace SupladaSalonLayout
             decimal totalServices = servicesTable.AsEnumerable().Sum(r => Convert.ToDecimal(r["ServicePrice"]));
 
             string productList = productsTable.Rows.Count > 0
-                ? string.Join(", ", productsTable.AsEnumerable().Select(r => r["ProductName"].ToString()))
+                ? string.Join(", ", productsTable.AsEnumerable().Select(r => 
+                    $"{r["ProductName"]} (Qty: {r["Quantity"]})"))
                 : "None";
-            decimal totalProducts = productsTable.AsEnumerable().Sum(r => Convert.ToDecimal(r["ProductPrice"]));
+            decimal totalProducts = productsTable.AsEnumerable().Sum(r => 
+                Convert.ToDecimal(r["ProductPrice"]) * Convert.ToInt32(r["Quantity"]));
 
             string discountName = cbDiscounts.SelectedIndex > 0 ? cbDiscounts.Text : "None";
             decimal subtotal = totalServices + totalProducts;
@@ -1335,6 +1461,36 @@ namespace SupladaSalonLayout
             {
                 MessageBox.Show("Error removing product: " + ex.Message, "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dataAvailedProducts_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // If quantity column was changed, recalculate totals
+            if (e.ColumnIndex >= 0 && dataAvailedProducts.Columns[e.ColumnIndex].Name == "Quantity")
+            {
+                try
+                {
+                    DataGridViewRow row = dataAvailedProducts.Rows[e.RowIndex];
+                    if (row.Cells["Quantity"].Value != null)
+                    {
+                        if (int.TryParse(row.Cells["Quantity"].Value.ToString(), out int quantity))
+                        {
+                            if (quantity <= 0)
+                            {
+                                MessageBox.Show("Quantity must be greater than 0.", "Invalid Quantity",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                row.Cells["Quantity"].Value = 1;
+                            }
+                        }
+                    }
+                    CalculateTotals();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error updating quantity: " + ex.Message, "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

@@ -88,14 +88,13 @@ namespace SupladaSalonLayout
                 {
                     conn.Open();
 
-                    // Count appointments with Status = 'Confirmed' for current user
+                    // Show all confirmed appointments (not filtered by UserID) to match Cashier dashboard
                     string query = @"SELECT COUNT(*) 
                                    FROM Appointments 
-                                   WHERE Status = 'Confirmed' AND UserID = @UserID";
+                                   WHERE Status = 'Confirmed'";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@UserID", currentUserID);
                         object result = cmd.ExecuteScalar();
                         int count = result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
 
@@ -123,13 +122,13 @@ namespace SupladaSalonLayout
                 {
                     conn.Open();
 
+                    // Show all 'On going' appointments (not filtered by UserID) to match Cashier dashboard
                     string query = @"SELECT COUNT(*) 
                                    FROM Appointments 
-                                   WHERE Status = 'On going' AND UserID = @UserID";
+                                   WHERE Status = 'On going'";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        cmd.Parameters.AddWithValue("@UserID", currentUserID);
                         object result = cmd.ExecuteScalar();
                         int count = result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
 

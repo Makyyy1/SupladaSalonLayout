@@ -80,8 +80,11 @@
             this.label26 = new System.Windows.Forms.Label();
             this.lblTotalService = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.cbTechnicians = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.numericQuantity = new System.Windows.Forms.NumericUpDown();
+            this.label14 = new System.Windows.Forms.Label();
+            this.txtDiscountPrice = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -91,6 +94,7 @@
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).BeginInit();
             this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericQuantity)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -258,6 +262,8 @@
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.txtDiscountPrice);
+            this.panel1.Controls.Add(this.label14);
             this.panel1.Controls.Add(this.btnRemoveService);
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.label8);
@@ -300,6 +306,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.numericQuantity);
             this.groupBox3.Controls.Add(this.btnRemoveProducts);
             this.groupBox3.Controls.Add(this.dataAvailedProducts);
             this.groupBox3.Controls.Add(this.cbProducts);
@@ -308,7 +315,7 @@
             this.groupBox3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(17, 433);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(563, 364);
+            this.groupBox3.Size = new System.Drawing.Size(634, 364);
             this.groupBox3.TabIndex = 80;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Products";
@@ -318,7 +325,7 @@
             this.btnRemoveProducts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
             this.btnRemoveProducts.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnRemoveProducts.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRemoveProducts.Location = new System.Drawing.Point(472, 38);
+            this.btnRemoveProducts.Location = new System.Drawing.Point(545, 38);
             this.btnRemoveProducts.Name = "btnRemoveProducts";
             this.btnRemoveProducts.Size = new System.Drawing.Size(79, 27);
             this.btnRemoveProducts.TabIndex = 82;
@@ -358,7 +365,7 @@
             this.btnAddProduct.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
             this.btnAddProduct.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnAddProduct.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAddProduct.Location = new System.Drawing.Point(389, 38);
+            this.btnAddProduct.Location = new System.Drawing.Point(462, 38);
             this.btnAddProduct.Name = "btnAddProduct";
             this.btnAddProduct.Size = new System.Drawing.Size(77, 27);
             this.btnAddProduct.TabIndex = 76;
@@ -465,7 +472,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(672, 357);
+            this.label6.Location = new System.Drawing.Point(672, 399);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(93, 19);
             this.label6.TabIndex = 77;
@@ -474,7 +481,7 @@
             // txtReferenceNumber
             // 
             this.txtReferenceNumber.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtReferenceNumber.Location = new System.Drawing.Point(771, 349);
+            this.txtReferenceNumber.Location = new System.Drawing.Point(771, 391);
             this.txtReferenceNumber.Name = "txtReferenceNumber";
             this.txtReferenceNumber.Size = new System.Drawing.Size(223, 27);
             this.txtReferenceNumber.TabIndex = 45;
@@ -484,7 +491,7 @@
             this.cbPayment.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPayment.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbPayment.FormattingEnabled = true;
-            this.cbPayment.Location = new System.Drawing.Point(771, 290);
+            this.cbPayment.Location = new System.Drawing.Point(771, 332);
             this.cbPayment.Name = "cbPayment";
             this.cbPayment.Size = new System.Drawing.Size(223, 27);
             this.cbPayment.TabIndex = 73;
@@ -493,7 +500,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(629, 293);
+            this.label4.Location = new System.Drawing.Point(629, 335);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(136, 19);
             this.label4.TabIndex = 72;
@@ -504,7 +511,7 @@
             this.btnCancelPayment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
             this.btnCancelPayment.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCancelPayment.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancelPayment.Location = new System.Drawing.Point(735, 446);
+            this.btnCancelPayment.Location = new System.Drawing.Point(735, 488);
             this.btnCancelPayment.Name = "btnCancelPayment";
             this.btnCancelPayment.Size = new System.Drawing.Size(129, 37);
             this.btnCancelPayment.TabIndex = 67;
@@ -516,7 +523,7 @@
             this.btnProceed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
             this.btnProceed.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnProceed.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProceed.Location = new System.Drawing.Point(870, 446);
+            this.btnProceed.Location = new System.Drawing.Point(870, 488);
             this.btnProceed.Name = "btnProceed";
             this.btnProceed.Size = new System.Drawing.Size(129, 37);
             this.btnProceed.TabIndex = 66;
@@ -527,7 +534,7 @@
             // 
             this.lblTotal.AutoSize = true;
             this.lblTotal.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTotal.Location = new System.Drawing.Point(949, 236);
+            this.lblTotal.Location = new System.Drawing.Point(949, 278);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(45, 23);
             this.lblTotal.TabIndex = 65;
@@ -557,7 +564,7 @@
             // 
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label35.Location = new System.Drawing.Point(718, 238);
+            this.label35.Location = new System.Drawing.Point(718, 280);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(47, 19);
             this.label35.TabIndex = 64;
@@ -577,7 +584,7 @@
             // 
             this.lblDiscountPrice.AutoSize = true;
             this.lblDiscountPrice.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDiscountPrice.Location = new System.Drawing.Point(949, 184);
+            this.lblDiscountPrice.Location = new System.Drawing.Point(949, 226);
             this.lblDiscountPrice.Name = "lblDiscountPrice";
             this.lblDiscountPrice.Size = new System.Drawing.Size(45, 23);
             this.lblDiscountPrice.TabIndex = 62;
@@ -597,7 +604,7 @@
             // 
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.Location = new System.Drawing.Point(659, 188);
+            this.label32.Location = new System.Drawing.Point(659, 230);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(106, 19);
             this.label32.TabIndex = 61;
@@ -657,6 +664,16 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Technician";
             // 
+            // cbTechnicians
+            // 
+            this.cbTechnicians.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTechnicians.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbTechnicians.FormattingEnabled = true;
+            this.cbTechnicians.Location = new System.Drawing.Point(220, 40);
+            this.cbTechnicians.Name = "cbTechnicians";
+            this.cbTechnicians.Size = new System.Drawing.Size(257, 27);
+            this.cbTechnicians.TabIndex = 82;
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -667,15 +684,40 @@
             this.label9.TabIndex = 37;
             this.label9.Text = "Technician:";
             // 
-            // cbTechnicians
+            // numericQuantity
             // 
-            this.cbTechnicians.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbTechnicians.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbTechnicians.FormattingEnabled = true;
-            this.cbTechnicians.Location = new System.Drawing.Point(220, 40);
-            this.cbTechnicians.Name = "cbTechnicians";
-            this.cbTechnicians.Size = new System.Drawing.Size(257, 27);
-            this.cbTechnicians.TabIndex = 82;
+            this.numericQuantity.Location = new System.Drawing.Point(393, 38);
+            this.numericQuantity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericQuantity.Name = "numericQuantity";
+            this.numericQuantity.Size = new System.Drawing.Size(63, 27);
+            this.numericQuantity.TabIndex = 84;
+            this.numericQuantity.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(654, 179);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(111, 19);
+            this.label14.TabIndex = 58;
+            this.label14.Text = "Discount Price:";
+            // 
+            // txtDiscountPrice
+            // 
+            this.txtDiscountPrice.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDiscountPrice.Location = new System.Drawing.Point(901, 171);
+            this.txtDiscountPrice.Name = "txtDiscountPrice";
+            this.txtDiscountPrice.Size = new System.Drawing.Size(93, 27);
+            this.txtDiscountPrice.TabIndex = 82;
             // 
             // AdminPayments
             // 
@@ -707,6 +749,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataAvailedServices)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericQuantity)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -767,5 +810,8 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ComboBox cbTechnicians;
+        private System.Windows.Forms.NumericUpDown numericQuantity;
+        private System.Windows.Forms.TextBox txtDiscountPrice;
+        private System.Windows.Forms.Label label14;
     }
 }

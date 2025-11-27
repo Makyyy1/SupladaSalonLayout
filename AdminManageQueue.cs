@@ -28,17 +28,16 @@ namespace SupladaSalonLayout
 
         private void RefreshDashboard()
         {
+            // Refresh both AdminHomeDashboard and CashierHomeDashboard if they are open
             foreach (Form form in Application.OpenForms)
             {
                 if (form is AdminHomeDashboard)
                 {
                     ((AdminHomeDashboard)form).RefreshCounts();
-                    break;
                 }
                 else if (form is CashierHomeDashboard)
                 {
                     ((CashierHomeDashboard)form).RefreshCounts();
-                    break;
                 }
             }
         }
@@ -102,10 +101,9 @@ namespace SupladaSalonLayout
                                     END AS AppointmentTime,  
                                     a.Status 
                                 FROM Appointments a 
-                                WHERE a.Status = 'On going' AND a.UserID = @UserID
+                                WHERE a.Status = 'On going'
                                 ORDER BY a.AppointmentDate DESC, a.AppointmentTime DESC";
                     SqlCommand cmd = new SqlCommand(query, connect);
-                    cmd.Parameters.AddWithValue("@UserID", currentUserID);
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     DataTable data = new DataTable();
                     adapter.Fill(data);

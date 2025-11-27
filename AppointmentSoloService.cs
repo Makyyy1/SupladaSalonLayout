@@ -17,6 +17,7 @@ namespace SupladaSalonLayout
         private AdminCreateAppointment parentForm;
         private DateTime initialTime;
         private DateTime initialDate;
+        private bool isInitializing = true; // Flag to prevent messages during initialization
 
         public AppointmentSoloService(AdminCreateAppointment parent)
         {
@@ -54,22 +55,23 @@ namespace SupladaSalonLayout
             dateOccupiedSched.Value = DateTime.Today;
             
             LoadOccupiedSchedule();
+            
+            // Mark initialization as complete - now user changes will trigger messages
+            isInitializing = false;
         }
 
         private void RefreshDashboard()
         {
-            // Find the open AdminHomeDashboard or CashierHomeDashboard and refresh it
+            // Refresh both AdminHomeDashboard and CashierHomeDashboard if they are open
             foreach (Form form in Application.OpenForms)
             {
                 if (form is AdminHomeDashboard)
                 {
                     ((AdminHomeDashboard)form).RefreshCounts();
-                    break;
                 }
                 else if (form is CashierHomeDashboard)
                 {
                     ((CashierHomeDashboard)form).RefreshCounts();
-                    break;
                 }
             }
         }
@@ -473,24 +475,89 @@ namespace SupladaSalonLayout
                 using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
                 {
                     connect.Open();
-                    string query = @"SELECT COUNT(*) FROM Appointments 
-                                   WHERE Status = 'Confirmed' 
-                                   AND AppointmentDate = @AppointmentDate 
-                                   AND CONVERT(varchar(8), AppointmentTime, 108) = CONVERT(varchar(8), @AppointmentTime, 108)";
+                    
+                    DateTime selectedDate = datePicker.Value.Date;
+                    TimeSpan selectedTime = TimePicker.Value.TimeOfDay;
+                    
+                    // Get all appointments for the selected date with active statuses
+                    string query = @"SELECT AppointmentTime 
+                                   FROM Appointments 
+                                   WHERE Status IN ('Confirmed', 'On going', 'Ready for Billing')
+                                   AND AppointmentDate = @AppointmentDate";
 
                     using (SqlCommand cmd = new SqlCommand(query, connect))
                     {
-                        cmd.Parameters.AddWithValue("@AppointmentDate", datePicker.Value.Date);
-                        cmd.Parameters.AddWithValue("@AppointmentTime", TimePicker.Value.TimeOfDay);
-
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-                        return count > 0;
+                        cmd.Parameters.AddWithValue("@AppointmentDate", selectedDate);
+                        
+                        List<TimeSpan> existingTimes = new List<TimeSpan>();
+                        
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                object timeValue = reader["AppointmentTime"];
+                                
+                                if (timeValue != null && timeValue != DBNull.Value)
+                                {
+                                    TimeSpan existingTime;
+                                    
+                                    // Handle different time storage formats
+                                    if (timeValue is TimeSpan)
+                                    {
+                                        existingTime = (TimeSpan)timeValue;
+                                    }
+                                    else if (TimeSpan.TryParse(timeValue.ToString(), out TimeSpan parsedTime))
+                                    {
+                                        existingTime = parsedTime;
+                                    }
+                                    else
+                                    {
+                                        // Try to parse as string time format
+                                        string timeStr = timeValue.ToString().Trim();
+                                        if (DateTime.TryParseExact(timeStr, new[] { "HH:mm:ss", "H:mm:ss", "HH:mm", "H:mm", "h:mm tt", "hh:mm tt" }, 
+                                            null, System.Globalization.DateTimeStyles.None, out DateTime timeAsDateTime))
+                                        {
+                                            existingTime = timeAsDateTime.TimeOfDay;
+                                        }
+                                        else
+                                        {
+                                            continue; // Skip invalid time formats
+                                        }
+                                    }
+                                    
+                                    // Compare times - allow 1 minute tolerance for rounding
+                                    TimeSpan difference = (selectedTime - existingTime).Duration();
+                                    if (difference.TotalMinutes < 1)
+                                    {
+                                        // Conflict found - times match (within 1 minute)
+                                        System.Diagnostics.Debug.WriteLine($"CONFLICT: Selected={selectedTime}, Existing={existingTime}, Diff={difference.TotalMinutes} min");
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        return false; // No conflicts found
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                System.Diagnostics.Debug.WriteLine($"HasAppointmentConflict Error: {ex.Message}\n{ex.StackTrace}");
+                MessageBox.Show("Error checking appointment conflicts: " + ex.Message + 
+                    "\n\nAppointment creation has been blocked for safety.", 
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Return true on error to be safe - prevent appointment creation if we can't verify
+                return true;
+            }
+        }
+
+        private void CheckAndWarnConflict()
+        {
+            if (HasAppointmentConflict())
+            {
+                MessageBox.Show("This appointment slot is already occupied. Please choose a different date or time.", 
+                    "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -503,6 +570,12 @@ namespace SupladaSalonLayout
 
         private void TimePicker_ValueChanged(object sender, EventArgs e)
         {
+            // Don't show messages during form initialization
+            if (isInitializing)
+            {
+                return;
+            }
+
             DateTime selectedTime = TimePicker.Value;
             DateTime selectedDate = datePicker.Value.Date;
             DateTime now = DateTime.Now;
@@ -571,6 +644,9 @@ namespace SupladaSalonLayout
                         "Past Time Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+
+            // Note: Conflict checking is done in ValidateInputs() and btnCreateAppointment_Click()
+            // No need to show warning here as it will be caught during validation
         }
 
         private bool ValidateInputs()
@@ -639,9 +715,13 @@ namespace SupladaSalonLayout
                 return false;
             }
 
-            if (HasAppointmentConflict())
+            // CRITICAL: Check for conflicts - this MUST prevent duplicate appointments
+            bool hasConflict = HasAppointmentConflict();
+            if (hasConflict)
             {
-                MessageBox.Show("This appointment slot is already occupied. Please choose a different date or time.", "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("This appointment slot is already occupied by another appointment. Please choose a different date or time.", 
+                    "Schedule Conflict", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                datePicker.Focus();
                 return false;
             }
 
@@ -656,10 +736,13 @@ namespace SupladaSalonLayout
                 return;
             }
 
-            // Check for appointment conflicts
-            if (HasAppointmentConflict())
+            // CRITICAL VALIDATION: Check for conflicts - MUST prevent duplicate appointments
+            bool hasConflict = HasAppointmentConflict();
+            if (hasConflict)
             {
-                MessageBox.Show("The selected time slot is already occupied. Please choose a different time.", "Time Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("ERROR: This appointment slot is already occupied. Cannot create duplicate appointment.\n\nPlease choose a different date or time.", 
+                    "Schedule Conflict - Appointment Blocked", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                datePicker.Focus();
                 return;
             }
 
@@ -668,6 +751,16 @@ namespace SupladaSalonLayout
                 using (SqlConnection connect = new SqlConnection(DB_Salon.connectionString))
                 {
                     connect.Open();
+
+                    // FINAL CHECK: Verify no conflict right before insertion (prevents race conditions)
+                    hasConflict = HasAppointmentConflict();
+                    if (hasConflict)
+                    {
+                        MessageBox.Show("ERROR: This appointment slot was just taken by another user. Cannot create duplicate appointment.\n\nPlease choose a different date or time.", 
+                            "Schedule Conflict - Appointment Blocked", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        datePicker.Focus();
+                        return;
+                    }
 
                     int userID = parentForm != null ? parentForm.GetCurrentUserID() : -1;
                     if (userID == -1)
@@ -805,6 +898,10 @@ namespace SupladaSalonLayout
             DateTime selectedDate = datePicker.Value.Date;
             DateTime now = DateTime.Now;
 
+            // Update the occupied schedule date picker to match the appointment date picker
+            dateOccupiedSched.Value = selectedDate;
+            LoadOccupiedSchedule();
+
             // If today is selected, ensure time is not in the past
             if (selectedDate == DateTime.Today)
             {
@@ -839,6 +936,9 @@ namespace SupladaSalonLayout
                     TimePicker.Value = selectedDate.AddHours(9);
                 }
             }
+
+            // Note: Conflict checking is done in ValidateInputs() and btnCreateAppointment_Click()
+            // No need to show warning here as it will be caught during validation
         }
 
         private void dataSchedule_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -860,3 +960,4 @@ namespace SupladaSalonLayout
         }
     }
 }
+
