@@ -226,6 +226,12 @@
     <Compile Include="ReceiptForm.Designer.cs">
       <DependentUpon>ReceiptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WalkInQueue.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WalkInQueue.Designer.cs">
+      <DependentUpon>WalkInQueue.cs</DependentUpon>
+    </Compile>
     <Compile Include="WalkInReceipt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -318,6 +324,9 @@
     </Compile>
     <EmbeddedResource Include="ReceiptForm.resx">
       <DependentUpon>ReceiptForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WalkInQueue.resx">
+      <DependentUpon>WalkInQueue.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WalkInReceipt.resx">
       <DependentUpon>WalkInReceipt.cs</DependentUpon>

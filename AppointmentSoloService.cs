@@ -73,6 +73,11 @@ namespace SupladaSalonLayout
                 {
                     ((CashierHomeDashboard)form).RefreshCounts();
                 }
+                else if (form is ViewReadyForQueue)
+                {
+                    // Refresh ViewReadyForQueue form to show newly created appointments
+                    ((ViewReadyForQueue)form).ReloadAppointments();
+                }
             }
         }
 

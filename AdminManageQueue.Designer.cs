@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminManageQueue));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.pcClose = new System.Windows.Forms.PictureBox();
@@ -46,6 +46,15 @@
             this.btnReadyBilling = new System.Windows.Forms.Button();
             this.btnScheduledAppointments = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.btnAddQueue = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnAll = new System.Windows.Forms.Button();
+            this.btnOnQueue = new System.Windows.Forms.Button();
+            this.btnOnGoing = new System.Windows.Forms.Button();
+            this.contextMenuQueue = new System.Windows.Forms.ContextMenuStrip();
+            this.menuItemChangeToOnGoing = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemChangeToOnQueue = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuQueue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataQueue)).BeginInit();
             this.SuspendLayout();
@@ -87,9 +96,9 @@
             this.btnCancelAppointment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
             this.btnCancelAppointment.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCancelAppointment.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancelAppointment.Location = new System.Drawing.Point(1388, 197);
+            this.btnCancelAppointment.Location = new System.Drawing.Point(1388, 265);
             this.btnCancelAppointment.Name = "btnCancelAppointment";
-            this.btnCancelAppointment.Size = new System.Drawing.Size(238, 38);
+            this.btnCancelAppointment.Size = new System.Drawing.Size(184, 38);
             this.btnCancelAppointment.TabIndex = 33;
             this.btnCancelAppointment.Text = "Remove from Queue";
             this.btnCancelAppointment.UseVisualStyleBackColor = false;
@@ -99,20 +108,20 @@
             // 
             this.dataQueue.AllowUserToAddRows = false;
             this.dataQueue.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            this.dataQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Window;
+            this.dataQueue.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle13;
             this.dataQueue.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataQueue.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.dataQueue.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.dataQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataQueue.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle14.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
+            dataGridViewCellStyle14.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle14.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle14.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(214)))), ((int)(((byte)(167)))));
+            dataGridViewCellStyle14.SelectionForeColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataQueue.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle14;
             this.dataQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.AppointmentDate,
@@ -122,24 +131,25 @@
             this.CustomerContact,
             this.Status});
             this.dataQueue.Cursor = System.Windows.Forms.Cursors.Hand;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(188)))), ((int)(((byte)(125)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataQueue.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle15.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle15.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(188)))), ((int)(((byte)(125)))));
+            dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataQueue.DefaultCellStyle = dataGridViewCellStyle15;
             this.dataQueue.EnableHeadersVisualStyles = false;
-            this.dataQueue.Location = new System.Drawing.Point(3, 63);
+            this.dataQueue.Location = new System.Drawing.Point(3, 105);
             this.dataQueue.Name = "dataQueue";
             this.dataQueue.ReadOnly = true;
             this.dataQueue.RowHeadersVisible = false;
             this.dataQueue.RowHeadersWidth = 100;
             this.dataQueue.RowTemplate.Height = 40;
             this.dataQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataQueue.Size = new System.Drawing.Size(1379, 874);
+            this.dataQueue.Size = new System.Drawing.Size(1379, 832);
             this.dataQueue.TabIndex = 39;
+            this.dataQueue.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataQueue_MouseClick);
             // 
             // AppointmentDate
             // 
@@ -196,9 +206,9 @@
             this.btnReadyBilling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
             this.btnReadyBilling.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnReadyBilling.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnReadyBilling.Location = new System.Drawing.Point(1388, 150);
+            this.btnReadyBilling.Location = new System.Drawing.Point(1388, 218);
             this.btnReadyBilling.Name = "btnReadyBilling";
-            this.btnReadyBilling.Size = new System.Drawing.Size(238, 41);
+            this.btnReadyBilling.Size = new System.Drawing.Size(184, 41);
             this.btnReadyBilling.TabIndex = 40;
             this.btnReadyBilling.Text = "Ready for Billing";
             this.btnReadyBilling.UseVisualStyleBackColor = false;
@@ -209,9 +219,9 @@
             this.btnScheduledAppointments.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
             this.btnScheduledAppointments.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnScheduledAppointments.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnScheduledAppointments.Location = new System.Drawing.Point(1388, 63);
+            this.btnScheduledAppointments.Location = new System.Drawing.Point(1388, 105);
             this.btnScheduledAppointments.Name = "btnScheduledAppointments";
-            this.btnScheduledAppointments.Size = new System.Drawing.Size(238, 41);
+            this.btnScheduledAppointments.Size = new System.Drawing.Size(184, 41);
             this.btnScheduledAppointments.TabIndex = 41;
             this.btnScheduledAppointments.Text = "View Ready for Queue";
             this.btnScheduledAppointments.UseVisualStyleBackColor = false;
@@ -222,13 +232,94 @@
             this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(162)))), ((int)(((byte)(162)))));
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnCancel.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCancel.Location = new System.Drawing.Point(1388, 241);
+            this.btnCancel.Location = new System.Drawing.Point(1388, 309);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(238, 38);
+            this.btnCancel.Size = new System.Drawing.Size(184, 38);
             this.btnCancel.TabIndex = 42;
             this.btnCancel.Text = "Cancel Appointment";
             this.btnCancel.UseVisualStyleBackColor = false;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnAddQueue
+            // 
+            this.btnAddQueue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(164)))), ((int)(((byte)(244)))), ((int)(((byte)(207)))));
+            this.btnAddQueue.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnAddQueue.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddQueue.Location = new System.Drawing.Point(1388, 152);
+            this.btnAddQueue.Name = "btnAddQueue";
+            this.btnAddQueue.Size = new System.Drawing.Size(184, 41);
+            this.btnAddQueue.TabIndex = 43;
+            this.btnAddQueue.Text = "Add to Queue";
+            this.btnAddQueue.UseVisualStyleBackColor = false;
+            this.btnAddQueue.Click += new System.EventHandler(this.btnAddQueue_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 74);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(84, 18);
+            this.label3.TabIndex = 44;
+            this.label3.Text = "Filter by:";
+            // 
+            // btnAll
+            // 
+            this.btnAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAll.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAll.Location = new System.Drawing.Point(106, 70);
+            this.btnAll.Name = "btnAll";
+            this.btnAll.Size = new System.Drawing.Size(77, 29);
+            this.btnAll.TabIndex = 45;
+            this.btnAll.Text = "All";
+            this.btnAll.UseVisualStyleBackColor = true;
+            this.btnAll.Click += new System.EventHandler(this.btnAll_Click);
+            // 
+            // btnOnQueue
+            // 
+            this.btnOnQueue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOnQueue.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOnQueue.Location = new System.Drawing.Point(189, 70);
+            this.btnOnQueue.Name = "btnOnQueue";
+            this.btnOnQueue.Size = new System.Drawing.Size(101, 29);
+            this.btnOnQueue.TabIndex = 46;
+            this.btnOnQueue.Text = "On Queue";
+            this.btnOnQueue.UseVisualStyleBackColor = true;
+            this.btnOnQueue.Click += new System.EventHandler(this.btnOnQueue_Click);
+            // 
+            // btnOnGoing
+            // 
+            this.btnOnGoing.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOnGoing.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOnGoing.Location = new System.Drawing.Point(296, 70);
+            this.btnOnGoing.Name = "btnOnGoing";
+            this.btnOnGoing.Size = new System.Drawing.Size(101, 29);
+            this.btnOnGoing.TabIndex = 47;
+            this.btnOnGoing.Text = "On Going";
+            this.btnOnGoing.UseVisualStyleBackColor = true;
+            this.btnOnGoing.Click += new System.EventHandler(this.btnOnGoing_Click);
+            // 
+            // contextMenuQueue
+            // 
+            this.contextMenuQueue.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemChangeToOnGoing,
+            this.menuItemChangeToOnQueue});
+            this.contextMenuQueue.Name = "contextMenuQueue";
+            this.contextMenuQueue.Size = new System.Drawing.Size(200, 48);
+            // 
+            // menuItemChangeToOnGoing
+            // 
+            this.menuItemChangeToOnGoing.Name = "menuItemChangeToOnGoing";
+            this.menuItemChangeToOnGoing.Size = new System.Drawing.Size(199, 22);
+            this.menuItemChangeToOnGoing.Text = "Change to On Going";
+            this.menuItemChangeToOnGoing.Click += new System.EventHandler(this.menuItemChangeToOnGoing_Click);
+            // 
+            // menuItemChangeToOnQueue
+            // 
+            this.menuItemChangeToOnQueue.Name = "menuItemChangeToOnQueue";
+            this.menuItemChangeToOnQueue.Size = new System.Drawing.Size(199, 22);
+            this.menuItemChangeToOnQueue.Text = "Change to On Queue";
+            this.menuItemChangeToOnQueue.Click += new System.EventHandler(this.menuItemChangeToOnQueue_Click);
             // 
             // AdminManageQueue
             // 
@@ -236,6 +327,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(237)))), ((int)(((byte)(212)))));
             this.ClientSize = new System.Drawing.Size(1638, 949);
+            this.Controls.Add(this.btnOnGoing);
+            this.Controls.Add(this.btnOnQueue);
+            this.Controls.Add(this.btnAll);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnAddQueue);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnScheduledAppointments);
             this.Controls.Add(this.btnReadyBilling);
@@ -247,6 +343,7 @@
             this.Name = "AdminManageQueue";
             this.Text = "AdminManageQueue";
             this.Load += new System.EventHandler(this.AdminManageQueue_Load);
+            this.contextMenuQueue.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pcClose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataQueue)).EndInit();
             this.ResumeLayout(false);
@@ -270,5 +367,13 @@
         private System.Windows.Forms.Button btnReadyBilling;
         private System.Windows.Forms.Button btnScheduledAppointments;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnAddQueue;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnAll;
+        private System.Windows.Forms.Button btnOnQueue;
+        private System.Windows.Forms.Button btnOnGoing;
+        private System.Windows.Forms.ContextMenuStrip contextMenuQueue;
+        private System.Windows.Forms.ToolStripMenuItem menuItemChangeToOnGoing;
+        private System.Windows.Forms.ToolStripMenuItem menuItemChangeToOnQueue;
     }
 }

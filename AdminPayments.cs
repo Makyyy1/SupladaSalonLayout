@@ -1065,69 +1065,141 @@ namespace SupladaSalonLayout
         {
             using (FileStream stream = new FileStream(filePath, FileMode.Create))
             {
-                Document document = new Document(PageSize.A4, 36f, 36f, 36f, 36f);
+                // Receipt size: 80mm width (226.77 points), auto height
+                // Standard thermal receipt printer size
+                iTextSharp.text.Rectangle receiptSize = new iTextSharp.text.Rectangle(226.77f, 841.89f); // 80mm x auto height
+                Document document = new Document(receiptSize, 10f, 10f, 10f, 10f);
                 PdfWriter.GetInstance(document, stream);
                 document.Open();
 
-                iTextFont titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
-                iTextFont sectionFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
-                iTextFont normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 11);
+                // Receipt-style fonts - smaller and compact
+                iTextFont headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 14);
+                iTextFont subHeaderFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
+                iTextFont normalFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+                iTextFont smallFont = FontFactory.GetFont(FontFactory.HELVETICA, 7);
+                iTextFont boldFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8);
 
-                Paragraph title = new Paragraph("Sales Summary", titleFont)
+                // Business Header
+                Paragraph businessName = new Paragraph("SUPLADA SALON", headerFont)
                 {
                     Alignment = Element.ALIGN_CENTER,
-                    SpacingAfter = 15f
+                    SpacingAfter = 3f
                 };
-                document.Add(title);
+                document.Add(businessName);
 
-                document.Add(new Paragraph($"Date: {paymentDate:MMMM dd, yyyy hh:mm tt}", normalFont));
-                document.Add(new Paragraph($"Processed By: {currentRole} {currentUsername}", normalFont));
-                string technicianName = cbTechnicians.SelectedIndex > 0 ? cbTechnicians.Text : "None";
-                document.Add(new Paragraph($"Technician: {technicianName}", normalFont));
-                document.Add(new Paragraph($"Gcash Reference #: {txtReferenceNumber.Text}", normalFont));
+                Paragraph businessInfo = new Paragraph("Sales Receipt", subHeaderFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 8f
+                };
+                document.Add(businessInfo);
+
+                AddSeparatorLine(document);
                 document.Add(Chunk.NEWLINE);
 
-                document.Add(new Paragraph("Customer Information", sectionFont));
-                document.Add(new Paragraph($"Name: {txtCustomerFirstName.Text} {txtCustomerLastName.Text}", normalFont));
-                document.Add(new Paragraph($"Contact: {txtContactNumber.Text}", normalFont));
-                document.Add(new Paragraph($"Appointment Date: {datePicker.Value:MMMM dd, yyyy}", normalFont));
-                document.Add(new Paragraph($"Appointment Time: {TimePicker.Value:hh:mm tt}", normalFont));
+                // Transaction Details
+                document.Add(new Paragraph($"Date: {paymentDate:MMM dd, yyyy hh:mm tt}", normalFont) { SpacingAfter = 2f });
+                document.Add(new Paragraph($"Receipt #: {selectedAppointmentID}", normalFont) { SpacingAfter = 2f });
+                document.Add(new Paragraph($"Cashier: {currentRole} {currentUsername}", normalFont) { SpacingAfter = 2f });
+                
+                string technicianName = cbTechnicians.SelectedIndex > 0 ? cbTechnicians.Text : "N/A";
+                document.Add(new Paragraph($"Technician: {technicianName}", normalFont) { SpacingAfter = 4f });
+
+                AddSeparatorLine(document);
                 document.Add(Chunk.NEWLINE);
 
-                document.Add(new Paragraph("Availed Services", sectionFont));
-                PdfPTable servicesPdfTable = new PdfPTable(2);
-                servicesPdfTable.WidthPercentage = 100;
-                servicesPdfTable.SetWidths(new float[] { 70f, 30f });
-                servicesPdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
+                // Customer Information
+                Paragraph custHeader = new Paragraph("CUSTOMER INFO", subHeaderFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 3f
+                };
+                document.Add(custHeader);
+                
+                document.Add(new Paragraph($"{txtCustomerFirstName.Text} {txtCustomerLastName.Text}", boldFont) { SpacingAfter = 2f });
+                if (!string.IsNullOrWhiteSpace(txtContactNumber.Text))
+                {
+                    document.Add(new Paragraph($"Contact: {txtContactNumber.Text}", normalFont) { SpacingAfter = 2f });
+                }
+                document.Add(new Paragraph($"Appt: {datePicker.Value:MMM dd, yyyy} {TimePicker.Value:hh:mm tt}", smallFont) { SpacingAfter = 4f });
 
-                servicesPdfTable.AddCell(GetHeaderCell("Service"));
-                servicesPdfTable.AddCell(GetHeaderCell("Price"));
+                AddSeparatorLine(document);
+                document.Add(Chunk.NEWLINE);
+
+                // Services Section
+                Paragraph servicesHeader = new Paragraph("AVAILED SERVICE", subHeaderFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 3f
+                };
+                document.Add(servicesHeader);
 
                 decimal totalServices = 0;
+                PdfPTable servicesPdfTable = new PdfPTable(2);
+                servicesPdfTable.WidthPercentage = 100;
+                servicesPdfTable.SetWidths(new float[] { 65f, 35f });
+                servicesPdfTable.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                servicesPdfTable.DefaultCell.PaddingBottom = 3f;
+                servicesPdfTable.DefaultCell.PaddingTop = 2f;
+
                 foreach (DataRow row in servicesTable.Rows)
                 {
                     string serviceName = row["ServiceName"].ToString();
                     decimal price = Convert.ToDecimal(row["ServicePrice"]);
                     totalServices += price;
-                    servicesPdfTable.AddCell(GetBodyCell(serviceName));
-                    servicesPdfTable.AddCell(GetBodyCell(price.ToString("N2"), Element.ALIGN_RIGHT));
+
+                    // Wrap long service names
+                    string displayName = serviceName.Length > 30 ? serviceName.Substring(0, 27) + "..." : serviceName;
+                    
+                    PdfPCell nameCell = new PdfPCell(new Phrase(displayName, normalFont))
+                    {
+                        Border = iTextSharp.text.Rectangle.NO_BORDER,
+                        PaddingLeft = 0f,
+                        PaddingRight = 5f
+                    };
+                    servicesPdfTable.AddCell(nameCell);
+
+                    PdfPCell priceCell = new PdfPCell(new Phrase(price.ToString("N2"), normalFont))
+                    {
+                        Border = iTextSharp.text.Rectangle.NO_BORDER,
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        PaddingRight = 0f
+                    };
+                    servicesPdfTable.AddCell(priceCell);
                 }
                 document.Add(servicesPdfTable);
+
+                // Services Total
+                PdfPTable servicesTotalTable = new PdfPTable(2);
+                servicesTotalTable.WidthPercentage = 100;
+                servicesTotalTable.SetWidths(new float[] { 65f, 35f });
+                servicesTotalTable.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                servicesTotalTable.DefaultCell.PaddingBottom = 2f;
+                servicesTotalTable.DefaultCell.PaddingTop = 2f;
+
+                servicesTotalTable.AddCell(GetReceiptTotalCell("Total Services:", normalFont, false));
+                servicesTotalTable.AddCell(GetReceiptTotalCell(totalServices.ToString("N2"), normalFont, true));
+                document.Add(servicesTotalTable);
                 document.Add(Chunk.NEWLINE);
 
-                document.Add(new Paragraph("Availed Products", sectionFont));
-                PdfPTable productsPdfTable = new PdfPTable(4);
-                productsPdfTable.WidthPercentage = 100;
-                productsPdfTable.SetWidths(new float[] { 40f, 20f, 20f, 20f });
-                productsPdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
-                productsPdfTable.AddCell(GetHeaderCell("Product"));
-                productsPdfTable.AddCell(GetHeaderCell("Unit Price"));
-                productsPdfTable.AddCell(GetHeaderCell("Quantity"));
-                productsPdfTable.AddCell(GetHeaderCell("Total"));
-
+                // Products Section
                 decimal totalProducts = 0;
                 if (productsTable.Rows.Count > 0)
                 {
+                    Paragraph productsHeader = new Paragraph("PRODUCTS", subHeaderFont)
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 3f
+                    };
+                    document.Add(productsHeader);
+
+                    PdfPTable productsPdfTable = new PdfPTable(2);
+                    productsPdfTable.WidthPercentage = 100;
+                    productsPdfTable.SetWidths(new float[] { 65f, 35f });
+                    productsPdfTable.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    productsPdfTable.DefaultCell.PaddingBottom = 3f;
+                    productsPdfTable.DefaultCell.PaddingTop = 2f;
+
                     foreach (DataRow row in productsTable.Rows)
                     {
                         string productName = row["ProductName"].ToString();
@@ -1135,52 +1207,120 @@ namespace SupladaSalonLayout
                         int quantity = Convert.ToInt32(row["Quantity"]);
                         decimal rowTotal = unitPrice * quantity;
                         totalProducts += rowTotal;
-                        productsPdfTable.AddCell(GetBodyCell(productName));
-                        productsPdfTable.AddCell(GetBodyCell(unitPrice.ToString("N2"), Element.ALIGN_RIGHT));
-                        productsPdfTable.AddCell(GetBodyCell(quantity.ToString(), Element.ALIGN_CENTER));
-                        productsPdfTable.AddCell(GetBodyCell(rowTotal.ToString("N2"), Element.ALIGN_RIGHT));
+
+                        // Format: Product Name (Qty: X)
+                        string displayName = $"{productName} ({quantity}x)";
+                        if (displayName.Length > 28)
+                        {
+                            displayName = productName.Substring(0, Math.Min(25, productName.Length)) + $" ({quantity}x)";
+                        }
+
+                        PdfPCell nameCell = new PdfPCell(new Phrase(displayName, smallFont))
+                        {
+                            Border = iTextSharp.text.Rectangle.NO_BORDER,
+                            PaddingLeft = 0f,
+                            PaddingRight = 5f
+                        };
+                        productsPdfTable.AddCell(nameCell);
+
+                        PdfPCell priceCell = new PdfPCell(new Phrase(rowTotal.ToString("N2"), smallFont))
+                        {
+                            Border = iTextSharp.text.Rectangle.NO_BORDER,
+                            HorizontalAlignment = Element.ALIGN_RIGHT,
+                            PaddingRight = 0f
+                        };
+                        productsPdfTable.AddCell(priceCell);
                     }
-                }
-                else
-                {
-                    PdfPCell noProductCell = new PdfPCell(new Phrase("No add-on products availed.", normalFont))
-                    {
-                        Colspan = 4,
-                        HorizontalAlignment = Element.ALIGN_LEFT,
-                        Padding = 5f
-                    };
-                    productsPdfTable.AddCell(noProductCell);
+                    document.Add(productsPdfTable);
+
+                    // Products Total
+                    PdfPTable productsTotalTable = new PdfPTable(2);
+                    productsTotalTable.WidthPercentage = 100;
+                    productsTotalTable.SetWidths(new float[] { 65f, 35f });
+                    productsTotalTable.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                    productsTotalTable.DefaultCell.PaddingBottom = 2f;
+                    productsTotalTable.DefaultCell.PaddingTop = 2f;
+
+                    productsTotalTable.AddCell(GetReceiptTotalCell("Total Products:", normalFont, false));
+                    productsTotalTable.AddCell(GetReceiptTotalCell(totalProducts.ToString("N2"), normalFont, true));
+                    document.Add(productsTotalTable);
+                    document.Add(Chunk.NEWLINE);
                 }
 
-                document.Add(productsPdfTable);
+                AddSeparatorLine(document);
                 document.Add(Chunk.NEWLINE);
 
-                document.Add(new Paragraph("Totals", sectionFont));
+                // Totals Section
                 PdfPTable totalsTable = new PdfPTable(2);
-                totalsTable.WidthPercentage = 70;
-                totalsTable.HorizontalAlignment = Element.ALIGN_LEFT;
-                totalsTable.SetWidths(new float[] { 50f, 50f });
-
-                totalsTable.AddCell(GetBodyCell("Total Services:", Element.ALIGN_LEFT));
-                totalsTable.AddCell(GetBodyCell(totalServices.ToString("N2"), Element.ALIGN_RIGHT));
-
-                totalsTable.AddCell(GetBodyCell("Total Products:", Element.ALIGN_LEFT));
-                totalsTable.AddCell(GetBodyCell(totalProducts.ToString("N2"), Element.ALIGN_RIGHT));
-
-                totalsTable.AddCell(GetBodyCell("Discount:", Element.ALIGN_LEFT));
-                totalsTable.AddCell(GetBodyCell(discountAmount.ToString("N2"), Element.ALIGN_RIGHT));
+                totalsTable.WidthPercentage = 100;
+                totalsTable.SetWidths(new float[] { 65f, 35f });
+                totalsTable.DefaultCell.Border = iTextSharp.text.Rectangle.NO_BORDER;
+                totalsTable.DefaultCell.PaddingBottom = 4f;
+                totalsTable.DefaultCell.PaddingTop = 2f;
 
                 decimal subtotal = totalServices + totalProducts;
                 decimal grandTotal = subtotal - discountAmount;
                 if (grandTotal < 0) grandTotal = 0;
 
-                totalsTable.AddCell(GetBodyCell("Grand Total:", Element.ALIGN_LEFT));
-                totalsTable.AddCell(GetBodyCell(grandTotal.ToString("N2"), Element.ALIGN_RIGHT));
+                // Subtotal
+                totalsTable.AddCell(GetReceiptTotalCell("Subtotal:", normalFont, false));
+                totalsTable.AddCell(GetReceiptTotalCell(subtotal.ToString("N2"), normalFont, true));
+
+                // Discount
+                if (discountAmount > 0)
+                {
+                    totalsTable.AddCell(GetReceiptTotalCell("Discount:", smallFont, false));
+                    totalsTable.AddCell(GetReceiptTotalCell("-" + discountAmount.ToString("N2"), smallFont, true));
+                }
+
+                // Grand Total
+                totalsTable.AddCell(GetReceiptTotalCell("TOTAL:", boldFont, false));
+                totalsTable.AddCell(GetReceiptTotalCell(grandTotal.ToString("N2"), boldFont, true));
 
                 document.Add(totalsTable);
                 document.Add(Chunk.NEWLINE);
 
-                document.Add(new Paragraph($"Mode of Payment: {cbPayment.Text}", normalFont));
+                AddSeparatorLine(document);
+                document.Add(Chunk.NEWLINE);
+
+                // Payment Information
+                Paragraph paymentInfo = new Paragraph($"Payment: {cbPayment.Text}", normalFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 2f
+                };
+                document.Add(paymentInfo);
+
+                if (cbPayment.Text.Equals("GCash", StringComparison.OrdinalIgnoreCase) && 
+                    !string.IsNullOrWhiteSpace(txtReferenceNumber.Text))
+                {
+                    Paragraph refNum = new Paragraph($"Ref #: {txtReferenceNumber.Text}", smallFont)
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 4f
+                    };
+                    document.Add(refNum);
+                }
+
+                document.Add(Chunk.NEWLINE);
+                AddSeparatorLine(document);
+                document.Add(Chunk.NEWLINE);
+
+                // Footer
+                Paragraph thankYou = new Paragraph("Thank you for your business!", normalFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 2f
+                };
+                document.Add(thankYou);
+
+                Paragraph returnPolicy = new Paragraph("Please keep this receipt for your records", smallFont)
+                {
+                    Alignment = Element.ALIGN_CENTER,
+                    SpacingAfter = 5f
+                };
+                document.Add(returnPolicy);
+
                 document.Close();
             }
         }
@@ -1203,6 +1343,29 @@ namespace SupladaSalonLayout
             {
                 Padding = 5f,
                 HorizontalAlignment = alignment
+            };
+            return cell;
+        }
+
+        private void AddSeparatorLine(Document document)
+        {
+            Paragraph separator = new Paragraph(new string('-', 45))
+            {
+                Alignment = Element.ALIGN_CENTER,
+                SpacingAfter = 3f
+            };
+            document.Add(separator);
+        }
+
+        private PdfPCell GetReceiptTotalCell(string text, iTextFont font, bool alignRight)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                Border = iTextSharp.text.Rectangle.NO_BORDER,
+                Padding = 2f,
+                HorizontalAlignment = alignRight ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT,
+                PaddingLeft = 0f,
+                PaddingRight = alignRight ? 0f : 5f
             };
             return cell;
         }

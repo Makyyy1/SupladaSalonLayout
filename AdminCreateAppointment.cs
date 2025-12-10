@@ -38,6 +38,7 @@ namespace SupladaSalonLayout
         private void RefreshDashboard()
         {
             // Refresh both AdminHomeDashboard and CashierHomeDashboard if they are open
+            // Also refresh ViewReadyForQueue if it's open
             foreach (Form form in Application.OpenForms)
             {
                 if (form is AdminHomeDashboard)
@@ -47,6 +48,11 @@ namespace SupladaSalonLayout
                 else if (form is CashierHomeDashboard)
                 {
                     ((CashierHomeDashboard)form).RefreshCounts();
+                }
+                else if (form is ViewReadyForQueue)
+                {
+                    // Refresh ViewReadyForQueue form to show newly created appointments
+                    ((ViewReadyForQueue)form).ReloadAppointments();
                 }
             }
         }
@@ -295,7 +301,7 @@ namespace SupladaSalonLayout
 
                     string updateQuery = "UPDATE [dbo].[Appointments] SET [Status] = @Status WHERE [AppointmentID] = @AppointmentID";
                     SqlCommand cmd = new SqlCommand(updateQuery, connect);
-                    cmd.Parameters.AddWithValue("@Status", "On going");
+                    cmd.Parameters.AddWithValue("@Status", "On Queue");
                     cmd.Parameters.AddWithValue("@AppointmentID", selectedAppointmentID);
 
                     int rowsAffected = cmd.ExecuteNonQuery();

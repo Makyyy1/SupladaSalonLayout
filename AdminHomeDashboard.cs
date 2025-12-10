@@ -125,7 +125,7 @@ namespace SupladaSalonLayout
                     // Show all 'On going' appointments (not filtered by UserID) to match Cashier dashboard
                     string query = @"SELECT COUNT(*) 
                                    FROM Appointments 
-                                   WHERE Status = 'On going'";
+                                   WHERE Status = 'On Queue'";
 
                     using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
